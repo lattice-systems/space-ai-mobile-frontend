@@ -104,14 +104,14 @@ fun OnboardingScreen(
                 }
             }
 
-            // Buttons
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(24.dp)
                     .height(80.dp)
             ) {
-                AnimatedVisibility(
+                // Wrap in its own scope to avoid implicit receiver conflicts
+                this@Column.AnimatedVisibility(
                     visible = pagerState.currentPage < pages.size - 1,
                     enter = fadeIn(),
                     exit = fadeOut(),
