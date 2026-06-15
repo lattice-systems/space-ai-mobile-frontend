@@ -15,7 +15,6 @@ class AuthInterceptor @Inject constructor(
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request()
         
-        // Skip adding token for public endpoints if needed
         if (request.url.encodedPath.contains("/auth/login") || 
             request.url.encodedPath.contains("/auth/register")) {
             return chain.proceed(request)
@@ -27,7 +26,7 @@ class AuthInterceptor @Inject constructor(
 
         val authenticatedRequest = if (token != null) {
             request.newBuilder()
-                .header("Authorization", "Bearer $token")
+                .header("Authorization", "Bearer ")
                 .build()
         } else {
             request
