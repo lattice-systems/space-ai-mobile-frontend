@@ -60,7 +60,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.compose.material3.windowSizeClass)
     implementation(libs.material)
+    implementation(libs.androidx.material.icons.extended)
 
     // Networking
     implementation(libs.retrofit)
@@ -87,7 +89,7 @@ dependencies {
 }
 protobuf {
     protoc {
-        artifact = libs.protobuf.protoc.get().toString()
+        artifact = "com.google.protobuf:protoc:4.26.1"
     }
     generateProtoTasks {
         all().forEach { task ->
