@@ -9,7 +9,7 @@ import javax.inject.Singleton
 
 @Singleton
 class CryptoManager @Inject constructor(
-    private val keystoreManager: KeystoreManager
+    private val keystoreManager: KeystoreManager,
 ) {
 
     companion object {
@@ -26,7 +26,6 @@ class CryptoManager @Inject constructor(
         val iv = cipher.iv
         val encryptedData = cipher.doFinal(plainText.toByteArray(StandardCharsets.UTF_8))
         
-        // Combine IV and Encrypted Data: IV(12) + CipherText
         val combined = ByteArray(iv.size + encryptedData.size)
         System.arraycopy(iv, 0, combined, 0, iv.size)
         System.arraycopy(encryptedData, 0, combined, iv.size, encryptedData.size)
