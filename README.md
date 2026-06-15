@@ -26,83 +26,66 @@ La aplicación permite a estudiantes, docentes, visitantes y administradores int
 
 La aplicación móvil está construida utilizando las tecnologías más modernas del ecosistema Android.
 
-| Tecnología             | Propósito                 |
-| ---------------------- | ------------------------- |
-| Kotlin 2.x             | Lenguaje principal        |
-| Jetpack Compose        | UI Declarativa            |
-| Material Design 3      | Sistema de Diseño         |
-| Navigation Compose     | Navegación                |
-| Hilt (Dagger)          | Inyección de Dependencias |
-| ViewModel              | Gestión de Estado         |
-| StateFlow              | Reactividad               |
-| Coroutines             | Programación Asíncrona    |
-| Retrofit               | Consumo de APIs           |
-| OkHttp                 | Cliente HTTP              |
-| Coil                   | Carga de Imágenes         |
-| Room                   | Persistencia Local        |
-| Google Maps / MapLibre | Navegación del Campus     |
-| MQTT                   | Comunicación IoT          |
-| JWT                    | Autenticación Segura      |
+| Tecnología             | Propósito                                     |
+| ---------------------- | --------------------------------------------- |
+| Kotlin 2.x             | Lenguaje principal                            |
+| Jetpack Compose        | UI Declarativa y Animaciones Premium          |
+| Material Design 3      | Sistema de Diseño Adaptativo                  |
+| Navigation Compose     | Gestión de flujo de pantallas                 |
+| Hilt (Dagger)          | Inyección de Dependencias                     |
+| DataStore Proto        | Almacenamiento persistente fuertemente tipado |
+**[Novedad]** **Android Keystore** | Cifrado AES/GCM de tokens y datos sensibles |
+**[Novedad]** **Protobuf**         | Serialización eficiente de datos            |
+| ViewModel              | Gestión de Estado (UDF)                       |
+| StateFlow              | Reactividad y flujos de datos                 |
+| Coroutines             | Programación Asíncrona                        |
+| Retrofit 2             | Consumo de APIs REST                          |
+| OkHttp 3               | Cliente HTTP con Interceptores                |
+| Coil                   | Carga de Imágenes                             |
+| Room                   | Persistencia Local (Próximamente)             |
+| Google Maps / MapLibre | Navegación del Campus                         |
+| MQTT                   | Comunicación IoT                              |
+| JWT                    | Autenticación Segura                          |
 
 ---
 
 # 🏗️ Arquitectura
 
-El proyecto sigue una arquitectura basada en:
+El proyecto sigue una arquitectura basada en **Clean Architecture** y **MVVM**:
 
-* MVVM (Model - View - ViewModel)
-* Clean Architecture
-* Principios SOLID
-* Inyección de Dependencias con Hilt
-* Single Source of Truth
-* Unidirectional Data Flow (UDF)
+* **Presentation:** UI con Jetpack Compose, ViewModels y StateFlow.
+* **Domain:** Entidades de negocio, interfaces de Repositorio y Casos de Uso (Use Cases).
+* **Data:** Implementaciones de Repositorios, DTOs, Mappers y API Services.
+* **Core:** Módulos transversales como Seguridad (Keystore), Red y Persistencia (DataStore).
 
-La separación de responsabilidades garantiza un sistema escalable, mantenible y preparado para futuras expansiones.
+---
+
+# 🧪 Modo de Desarrollo (Mock Mode)
+
+Para facilitar el desarrollo sin dependencia constante de un backend activo, la aplicación incluye un **Mock Repository** que simula el proceso de autenticación.
+
+### Credenciales de Prueba (Mocks)
+
+| Campo      | Valor               |
+| ---------- |---------------------|
+| **Email**    | `ejemplo@gmail.com` |
+| **Password** | `admin12345`        |
+
+> **Nota:** Este repositorio de prueba reside en el source set `debug` (`app/src/debug/java`), por lo que el código de prueba nunca se incluirá en las versiones de producción (`release`).
 
 ---
 
 # 📱 Funcionalidades Principales
 
+## ✨ Pantalla de Presentación (Splash)
+* Animaciones premium de alta fidelidad.
+* Efectos de partículas dinámicas y flotación de logo.
+* Transición automática fluida al Login.
+
 ## 🎓 Identidad Digital
-
-* Inicio de sesión seguro.
-* Gestión de sesiones.
-* Generación de QR dinámico.
-* Validación de identidad.
-
-## 🤖 Asistente Inteligente
-
-* Consultas académicas.
-* Información institucional.
-* Navegación guiada.
-* Soporte basado en IA (RAG).
-
-## 🗺️ Navegación Inteligente
-
-* Mapa interactivo del campus.
-* Búsqueda de edificios.
-* Generación de rutas.
-* Ubicación de servicios.
-
-## 🚗 Robot de Guiado Autónomo
-
-* Solicitud de acompañamiento.
-* Seguimiento en tiempo real.
-* Estado operativo del robot.
-* Navegación asistida.
-
-## 📢 Servicios Universitarios
-
-* Noticias institucionales.
-* Eventos.
-* Avisos importantes.
-* Servicios académicos.
-
-## 🚨 Centro de Emergencias
-
-* Contactos de emergencia.
-* Reporte de incidentes.
-* Acceso rápido a soporte.
+* Inicio de sesión seguro con validación en tiempo real.
+* Almacenamiento cifrado de JWT mediante Keystore.
+* Soporte para UI responsiva (Teléfonos y Tablets).
 
 ---
 
@@ -110,166 +93,31 @@ La separación de responsabilidades garantiza un sistema escalable, mantenible y
 
 ## 1. Prerrequisitos
 
-Antes de comenzar asegúrate de tener instalado:
+* Android Studio Narwhal o superior.
+* JDK 21.
+* SDK de Android API 35.
 
-| Herramienta    | Versión            |
-| -------------- | ------------------ |
-| Android Studio | Narwhal o superior |
-| JDK            | 21                 |
-| Kotlin         | 2.x                |
-| Android SDK    | API 35             |
-| Git            | Última versión     |
-
-Verificar instalación:
+## 2. Sincronizar y Ejecutar
 
 ```bash
-java -version
-```
-
-```bash
-git --version
-```
-
----
-
-## 2. Clonar el Repositorio
-
-```bash
-git clone https://github.com/lattice-systems/space-ai-mobile.git
-cd space-ai-mobile
-```
-
----
-
-## 3. Configurar Variables Locales
-
-Crear o actualizar:
-
-```properties
-local.properties
-```
-
-Ejemplo:
-
-```properties
-MAPS_API_KEY=YOUR_KEY
-BASE_URL=https://api.spaceia.com
-MQTT_HOST=mqtt.spaceia.com
-```
-
-> ⚠️ Nunca subir credenciales reales al repositorio.
-
----
-
-## 4. Sincronizar Dependencias
-
-Abrir el proyecto en Android Studio.
-
-Ejecutar:
-
-```bash
-Sync Project with Gradle Files
-```
-
-o desde terminal:
-
-```bash
+# Sincronizar dependencias
 ./gradlew build
-```
 
----
+# Generar clases de Proto (si es necesario)
+./gradlew :app:generateDebugProto
 
-## 5. Ejecutar la Aplicación
-
-```bash
-Run > Run 'app'
-```
-
-o
-
-```bash
-Shift + F10
-```
-
----
-
-# 📂 Estructura del Proyecto
-
-```text
-app/src/main/java/com/latticesystems/spaceia
-
-├── core
-│   ├── di
-│   ├── navigation
-│   ├── theme
-│   ├── common
-│   └── utils
-│
-├── data
-│   ├── remote
-│   ├── local
-│   ├── repository
-│   └── mapper
-│
-├── domain
-│   ├── model
-│   ├── repository
-│   └── usecase
-│
-├── presentation
-│   ├── login
-│   ├── home
-│   ├── qr
-│   ├── map
-│   ├── assistant
-│   ├── robot
-│   ├── profile
-│   └── components
+# Ejecutar la app
+Run > app (Debug)
 ```
 
 ---
 
 # 🔐 Seguridad
 
-La aplicación implementa:
-
-* JWT Authentication
-* Control de acceso basado en roles (RBAC)
-* Validación de QR dinámico
-* Comunicación segura HTTPS
-* Manejo seguro de sesiones
-
----
-
-# 📈 Roadmap
-
-### Sprint 1
-
-* Arquitectura base.
-* Login.
-* Hilt.
-* Navigation Compose.
-
-### Sprint 2
-
-* QR Dinámico.
-* Perfil de usuario.
-* Dashboard principal.
-
-### Sprint 3
-
-* Mapa inteligente.
-* Navegación del campus.
-
-### Sprint 4
-
-* Asistente IA.
-* Integración RAG.
-
-### Sprint 5
-
-* Robot autónomo.
-* Seguimiento en tiempo real.
+La seguridad es el pilar de SpaceIA Mobile:
+* **Cifrado en Reposo:** Los tokens (Access & Refresh) se cifran con AES-GCM antes de guardarse en DataStore.
+* **Hardware-Backed Security:** Las llaves maestras residen en el enclave seguro del dispositivo (Keystore).
+* **Network Security:** Interceptor automático de JWT y configuración de tiempos de espera (timeouts).
 
 ---
 
@@ -281,10 +129,7 @@ Proyecto académico desarrollado para la Universidad Tecnológica de León por e
 
 <div align="center">
 
-### 🚀 SpaceIA
-
-### Smart Campus Ecosystem
-
+### 🚀 SpaceIA — Smart Campus Ecosystem
 Transformando la experiencia universitaria mediante Inteligencia Artificial, IoT y Automatización.
 
 </div>

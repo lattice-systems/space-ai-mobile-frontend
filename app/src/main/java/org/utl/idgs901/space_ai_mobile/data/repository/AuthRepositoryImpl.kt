@@ -13,18 +13,15 @@ import javax.inject.Singleton
 @Singleton
 class AuthRepositoryImpl @Inject constructor(
     private val authApi: AuthApi,
-    private val tokenManager: TokenManager
+    private val tokenManager: TokenManager,
 ) : AuthRepository {
 
     override suspend fun login(email: String, password: String): Result<User> {
         return try {
             val response = authApi.login(LoginRequestDto(email, password))
-            
-            // Persist tokens securely
             tokenManager.saveAccessToken(response.accessToken)
             tokenManager.saveRefreshToken(response.refreshToken)
             tokenManager.saveExpiresAt(System.currentTimeMillis() + (response.expiresIn * 1000))
-            
             Result.success(response.user.toDomain())
         } catch (e: Exception) {
             Result.failure(e)

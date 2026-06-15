@@ -14,8 +14,6 @@ class TokenAuthenticator @Inject constructor(
 ) : Authenticator {
 
     override fun authenticate(route: Route?, response: Response): Request? {
-        // This is where refresh token logic will be implemented in the future
-        // For now, it returns null to stop retrying on 401
         return null
     }
 }
