@@ -1,12 +1,12 @@
 package org.utl.idgs901.space_ai_mobile.presentation.navigation
 
-import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.utl.idgs901.space_ai_mobile.presentation.auth.LoginScreen
+import org.utl.idgs901.space_ai_mobile.presentation.dashboard.DashboardScreen
 import org.utl.idgs901.space_ai_mobile.presentation.splash.SplashScreen
 
 @Composable
@@ -39,7 +39,7 @@ fun AppNavigation(windowSizeClass: WindowSizeClass) {
         }
         
         composable("dashboard") {
-            Text("Welcome to Dashboard!")
+            DashboardScreen()
         }
     }
 }

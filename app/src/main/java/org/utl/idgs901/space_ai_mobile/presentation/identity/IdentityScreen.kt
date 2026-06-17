@@ -1,8 +1,8 @@
 package org.utl.idgs901.space_ai_mobile.presentation.identity
 
 import android.graphics.Bitmap
-import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -34,7 +34,6 @@ fun IdentityScreen(
         modifier = Modifier
             .fillMaxSize()
             .background(Color(0xFFF5F7FA))
-            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
         val screenWidth = this.maxWidth
         val isSmallScreen = screenWidth < 360.dp
@@ -46,34 +45,6 @@ fun IdentityScreen(
                 .padding(horizontal = if (isSmallScreen) 16.dp else 24.dp, vertical = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Surface(
-                    modifier = Modifier.size(40.dp),
-                    shape = CircleShape,
-                    color = Color.LightGray
-                ) {
-                    Icon(Icons.Default.Person, contentDescription = null, modifier = Modifier.padding(8.dp))
-                }
-                
-                Text(
-                    text = "SpaceIA",
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color(0xFF0D47A1)
-                )
-                
-                IconButton(onClick = { }) {
-                    Icon(Icons.Default.Notifications, contentDescription = "Alerts")
-                }
-            }
-
-            Spacer(modifier = Modifier.height(24.dp))
-
             Text(
                 text = "Digital Identity",
                 fontSize = 24.sp,
@@ -232,7 +203,7 @@ fun IdentityScreen(
                 )
             }
             
-            Spacer(modifier = Modifier.height(80.dp))
+            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }
