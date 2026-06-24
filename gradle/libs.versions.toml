@@ -16,6 +16,8 @@ okhttp = "4.12.0"
 datastore = "1.1.1"
 protobuf = "4.26.1"
 protobufPlugin = "0.9.4"
+zxing = "3.5.3"
+protobuf-gradle-plugin = { group = "com.google.protobuf", name = "protobuf-gradle-plugin", version.ref = "protobufPlugin" }
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -55,6 +57,12 @@ protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref 
 # Icons
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-material3-windowSizeClass = { group = "androidx.compose.material3", name = "material3-window-size-class" }
+
+# QR
+zxing-core = { group = "com.google.zxing", name = "core", version.ref = "zxing" }
+
+# Desugaring
+desugar-jdk-libs = { group = "com.android.tools", name = "desugar_jdk_libs", version = "2.1.4" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
