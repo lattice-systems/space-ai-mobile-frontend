@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.sp
 import org.utl.idgs901.space_ai_mobile.presentation.identity.IdentityScreen
 
 sealed class DashboardTab(val route: String, val icon: ImageVector, val label: String) {
-    object Home : DashboardTab("home", Icons.Default.GridView, "Home")
-    object Identity : DashboardTab("identity", Icons.Default.Contactless, "Identity")
-    object Map : DashboardTab("map", Icons.Default.Explore, "Map")
-    object AI : DashboardTab("ai", Icons.Default.SmartToy, "AI")
-    object Academic : DashboardTab("academic", Icons.Default.School, "Academic")
+    object Home : DashboardTab("home", Icons.Default.GridView, "Inicio")
+    object Identity : DashboardTab("identity", Icons.Default.Contactless, "Identidad")
+    object Map : DashboardTab("map", Icons.Default.Explore, "Mapa")
+    object AI : DashboardTab("ai", Icons.Default.SmartToy, "IA")
+    object Academic : DashboardTab("academic", Icons.Default.School, "Académico")
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,12 +51,12 @@ fun DashboardScreen() {
                             .clip(CircleShape),
                         color = Color.LightGray
                     ) {
-                        Icon(Icons.Default.Person, contentDescription = "Profile", modifier = Modifier.padding(6.dp))
+                        Icon(Icons.Default.Person, contentDescription = "Perfil", modifier = Modifier.padding(6.dp))
                     }
                 },
                 actions = {
                     IconButton(onClick = { }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Notifications", tint = Color.DarkGray)
+                        Icon(Icons.Default.Notifications, contentDescription = "Notificaciones", tint = Color.DarkGray)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
