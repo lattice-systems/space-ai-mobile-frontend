@@ -46,7 +46,7 @@ fun IdentityScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Digital Identity",
+                text = "Identidad Digital",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.Black
@@ -61,7 +61,7 @@ fun IdentityScreen(
                 )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(
-                    text = "Verified & Active",
+                    text = "Verificado y Activo",
                     fontSize = 14.sp,
                     color = Color.Gray
                 )
@@ -92,7 +92,7 @@ fun IdentityScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             Text(
-                                text = "COMPUTER SCIENCE SENIOR",
+                                text = "ESTUDIANTE DE INGENIERÍA",
                                 color = Color.White.copy(alpha = 0.7f),
                                 fontSize = 12.sp,
                                 letterSpacing = 1.sp
@@ -112,11 +112,11 @@ fun IdentityScreen(
 
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = "ID NUMBER", color = Color.White.copy(alpha = 0.6f), fontSize = 10.sp)
+                            Text(text = "NÚMERO DE ID", color = Color.White.copy(alpha = 0.6f), fontSize = 10.sp)
                             Text(text = "2024-8892", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         }
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(text = "VALID THRU", color = Color.White.copy(alpha = 0.6f), fontSize = 10.sp)
+                            Text(text = "VÁLIDO HASTA", color = Color.White.copy(alpha = 0.6f), fontSize = 10.sp)
                             Text(text = "05/26", color = Color.White, fontSize = 18.sp, fontWeight = FontWeight.Bold)
                         }
                     }
@@ -173,7 +173,7 @@ fun IdentityScreen(
                             }
                             
                             Text(
-                                text = "Code refreshes automatically for security",
+                                text = "El código se actualiza automáticamente por seguridad",
                                 color = Color.White.copy(alpha = 0.6f),
                                 fontSize = 10.sp,
                                 modifier = Modifier.padding(top = 12.dp)
@@ -192,13 +192,13 @@ fun IdentityScreen(
                 ActionCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Default.QrCodeScanner,
-                    label = "Tap to Access",
+                    label = "Tocar para Acceder",
                     tint = Color(0xFF0D47A1)
                 )
                 ActionCard(
                     modifier = Modifier.weight(1f),
                     icon = Icons.Default.Wallet,
-                    label = "Add to Wallet",
+                    label = "Agregar a Wallet",
                     tint = Color(0xFF4FC3F7)
                 )
             }
@@ -216,7 +216,7 @@ fun QrCodeImage(token: String) {
     bitmap?.let {
         Image(
             bitmap = it.asImageBitmap(),
-            contentDescription = "Dynamic QR Code",
+            contentDescription = "Código QR Dinámico",
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit
         )
