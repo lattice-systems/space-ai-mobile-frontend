@@ -111,7 +111,7 @@ fun LoginContent(
                 Box(contentAlignment = Alignment.Center) {
                     Icon(
                         imageVector = Icons.Default.Face,
-                        contentDescription = "Logo",
+                        contentDescription = "Logotipo",
                         tint = Color(0xFF003C8F),
                         modifier = Modifier.size((logoSize.value * 0.5f).dp)
                     )
