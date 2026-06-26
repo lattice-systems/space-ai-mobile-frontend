@@ -136,7 +136,7 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
         Box(contentAlignment = Alignment.Center) {
             Icon(
                 imageVector = Icons.Default.Face,
-                contentDescription = null,
+                contentDescription = "Logotipo de SpaceIA",
                 tint = Color(0xFF0D47A1),
                 modifier = Modifier.size(if (isSmallScreen) 50.dp else 64.dp)
             )
