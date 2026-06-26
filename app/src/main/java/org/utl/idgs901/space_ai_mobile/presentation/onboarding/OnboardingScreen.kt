@@ -36,7 +36,7 @@ data class OnboardingPage(
 
 val pages = listOf(
     OnboardingPage(
-        title = "Smart Campus",
+        title = "Campus Inteligente",
         description = "Bienvenido a SpaceIA, el ecosistema digital que transforma tu experiencia universitaria con inteligencia artificial.",
         icon = Icons.Default.School,
         color = Color(0xFF1565C0)
