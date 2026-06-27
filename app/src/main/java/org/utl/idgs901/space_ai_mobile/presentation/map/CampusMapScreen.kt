@@ -31,15 +31,27 @@ import org.utl.idgs901.space_ai_mobile.domain.map.model.Building
 import org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState
 import org.utl.idgs901.space_ai_mobile.presentation.location.CampusLocationViewModel
 import org.utl.idgs901.space_ai_mobile.presentation.location.components.CampusStatusIndicator
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.NavigationViewModel
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.NavigationRendererViewModel
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.NavigationRendererUiState
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.components.NavigationInfoCard
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.components.NavigationFloatingPanel
+import org.utl.idgs901.space_ai_mobile.presentation.navigation.renderer.RouteRenderer
+import org.maplibre.android.geometry.LatLngBounds
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CampusMapScreen(
     viewModel: CampusMapViewModel = hiltViewModel(),
-    locationViewModel: CampusLocationViewModel = hiltViewModel()
+    locationViewModel: CampusLocationViewModel = hiltViewModel(),
+    navigationViewModel: NavigationViewModel = hiltViewModel(),
+    navigationRendererViewModel: NavigationRendererViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val locationState by locationViewModel.uiState.collectAsState()
+    val navigationUiState by navigationViewModel.uiState.collectAsState()
+    val navigationRendererUiState by navigationRendererViewModel.uiState.collectAsState()
+    
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -48,18 +60,30 @@ fun CampusMapScreen(
         showBottomSheet = uiState.selectedBuilding != null
     }
 
+    // Connect Navigation Engine with Renderer
+    LaunchedEffect(navigationUiState.currentRoute) {
+        navigationUiState.currentRoute?.let { route ->
+            uiState.selectedBuilding?.let { building ->
+                navigationRendererViewModel.setRoute(route, building.name)
+            }
+        } ?: navigationRendererViewModel.clearRoute()
+    }
+
     Scaffold(
         topBar = {
-            CenterAlignedTopAppBar(
-                title = { Text("Smart Campus UTL", fontWeight = FontWeight.Bold, color = Color(0xFF0D47A1)) },
-                actions = { 
-                    CampusStatusIndicator(
-                        state = locationState.campusState,
-                        isLoading = locationState.isLoading
-                    ) 
-                },
-                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
-            )
+            Column {
+                CenterAlignedTopAppBar(
+                    title = { Text("Smart Campus UTL", fontWeight = FontWeight.Bold, color = Color(0xFF0D47A1)) },
+                    actions = { 
+                        CampusStatusIndicator(
+                            state = locationState.campusState,
+                            isLoading = locationState.isLoading
+                        ) 
+                    },
+                    colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
+                )
+                NavigationFloatingPanel(state = navigationRendererUiState)
+            }
         }
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
@@ -67,30 +91,59 @@ fun CampusMapScreen(
                 uiState = uiState,
                 locationState = locationState.campusState,
                 userLocation = locationState.location?.let { LatLng(it.latitude, it.longitude) },
+                navigationState = navigationRendererUiState,
                 onBuildingClick = { viewModel.onEvent(CampusMapEvent.BuildingSelected(it)) }
             )
 
-            if (locationState.campusState is CampusLocationState.Outside) {
+            if (locationState.campusState is CampusLocationState.Outside && !navigationRendererUiState.isRouteVisible) {
                 OutsideWarning(Modifier.align(Alignment.TopCenter).padding(16.dp))
             }
 
-            if (uiState.isLoading) {
+            if (uiState.isLoading || navigationUiState.calculatingRoute) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color(0xFF0D47A1))
             }
+
+            NavigationInfoCard(
+                state = navigationRendererUiState,
+                onClose = { 
+                    navigationViewModel.clearRoute()
+                    viewModel.onEvent(CampusMapEvent.ClearSelection)
+                },
+                modifier = Modifier.align(Alignment.BottomCenter)
+            )
         }
 
-        if (showBottomSheet) {
+        if (showBottomSheet && !navigationRendererUiState.isRouteVisible) {
             ModalBottomSheet(
                 onDismissRequest = { viewModel.onEvent(CampusMapEvent.ClearSelection) },
                 sheetState = sheetState,
                 containerColor = Color.White
             ) {
                 Column {
-                    uiState.selectedBuilding?.let { BuildingDetails(it) }
+                    uiState.selectedBuilding?.let { building ->
+                        BuildingDetails(building)
+                        
+                        Button(
+                            onClick = {
+                                locationState.location?.let { loc ->
+                                    navigationViewModel.calculateRoute(loc.latitude, loc.longitude, building)
+                                }
+                                showBottomSheet = false
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 24.dp, vertical = 16.dp),
+                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
+                            shape = RoundedCornerShape(12.dp)
+                        ) {
+                            Icon(Icons.Default.Directions, contentDescription = null)
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text("Cómo llegar")
+                        }
+                    }
                     
-                    // Show current location in bottom sheet if relevant
                     if (locationState.location != null) {
-                        Divider(modifier = Modifier.padding(horizontal = 24.dp))
+                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
                         UserLocationInfo(locationState)
                     }
                 }
@@ -102,9 +155,11 @@ fun CampusMapScreen(
 @Composable
 fun CampusMapView(
     uiState: CampusMapUiState,
-    locationState: CampusLocationState,
+    locationState: org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState,
     userLocation: LatLng?,
-    onBuildingClick: (Building) -> Unit
+    navigationState: NavigationRendererUiState,
+    onBuildingClick: (Building) -> Unit,
+    routeRenderer: RouteRenderer = hiltViewModel<org.utl.idgs901.space_ai_mobile.presentation.navigation.renderer.RouteRendererWrapper>().renderer
 ) {
     val context = LocalContext.current
     val utlCenter = LatLng(21.0630, -101.5815)
@@ -226,10 +281,77 @@ fun CampusMapView(
                             source.setGeoJson(geoJson)
                         }
                     }
+
+                    // ROUTE RENDERING (Sprint 4)
+                    if (navigationState.isRouteVisible && navigationState.route != null) {
+                        val routeSourceId = "route-source"
+                        val routeLayerId = "route-layer"
+                        val routeOutlineId = "route-outline"
+                        
+                        val routeGeoJson = routeRenderer.generateAnimatedGeoJson(
+                            navigationState.route, 
+                            navigationState.animationProgress
+                        )
+
+                        val source = style.getSource(routeSourceId) as? GeoJsonSource
+                        if (source == null) {
+                            style.addSource(GeoJsonSource(routeSourceId, routeGeoJson))
+                            
+                            // Route Outline (Shadow/Border)
+                            style.addLayerBelow(LineLayer(routeOutlineId, routeSourceId).withProperties(
+                                lineColor("#CBD5E1"),
+                                lineWidth(10f),
+                                lineOpacity(0.5f),
+                                lineCap("round"),
+                                lineJoin("round")
+                            ), "user-location-layer")
+
+                            // Main Route Line
+                            style.addLayerAbove(LineLayer(routeLayerId, routeSourceId).withProperties(
+                                lineColor("#0D47A1"),
+                                lineWidth(6f),
+                                lineOpacity(0.9f),
+                                lineCap("round"),
+                                lineJoin("round")
+                            ), routeOutlineId)
+                        } else {
+                            source.setGeoJson(routeGeoJson)
+                        }
+                        
+                        // Destination Marker
+                        val destNode = navigationState.route.path.last()
+                        val destSourceId = "dest-location-source"
+                        val destGeoJson = """
+                            {"type":"Point","coordinates":[${destNode.longitude},${destNode.latitude}]}
+                        """
+                        val dSource = style.getSource(destSourceId) as? GeoJsonSource
+                        if (dSource == null) {
+                            style.addSource(GeoJsonSource(destSourceId, destGeoJson))
+                            style.addLayerAbove(CircleLayer("dest-layer", destSourceId).withProperties(
+                                circleColor("#F44336"),
+                                circleRadius(10f),
+                                circleStrokeColor("#FFFFFF"),
+                                circleStrokeWidth(3f)
+                            ), routeLayerId)
+                        } else {
+                            dSource.setGeoJson(destGeoJson)
+                        }
+                    } else {
+                        // Clear route if not visible
+                        style.getLayer("route-layer")?.let { style.removeLayer(it) }
+                        style.getLayer("route-outline")?.let { style.removeLayer(it) }
+                        style.getLayer("dest-layer")?.let { style.removeLayer(it) }
+                        style.getSource("route-source")?.let { style.removeSource(it) }
+                        style.getSource("dest-location-source")?.let { style.removeSource(it) }
+                    }
                 }
 
-                // Camera logic
-                if (locationState is org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState.Inside && userLocation != null) {
+                // Camera logic (Sprint 4: Fit Bounds)
+                if (navigationState.isRouteVisible && navigationState.route != null) {
+                    val points = navigationState.route.path.map { LatLng(it.latitude, it.longitude) }
+                    val bounds = LatLngBounds.Builder().includes(points).build()
+                    map.animateCamera(CameraUpdateFactory.newLatLngBounds(bounds, 150), 1000)
+                } else if (locationState is org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState.Inside && userLocation != null) {
                     map.animateCamera(CameraUpdateFactory.newLatLng(userLocation), 1000)
                 } else {
                     map.cameraPosition = CameraPosition.Builder()
