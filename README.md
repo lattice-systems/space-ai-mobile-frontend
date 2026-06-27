@@ -87,6 +87,13 @@ Para facilitar el desarrollo sin dependencia constante de un backend activo, la 
 * Almacenamiento cifrado de JWT mediante Keystore.
 * Soporte para UI responsiva (Teléfonos y Tablets).
 
+## 🗺️ Smart Campus & Navegación 3D [NUEVO]
+* **Campus 3D:** Visualización interactiva de los edificios de la UTL en 3D.
+* **Geofencing:** Detección automática de entrada/salida del campus.
+* **Navegación Inteligente:** Motor de rutas basado en el algoritmo A* y grafo universitario.
+* **Experiencia Premium:** Renderizado de rutas animadas con estilo moderno (Material 3).
+* Ver más detalles en: [Documentación del Mapa](docs/SMART_CAMPUS_MAP.md).
+
 ---
 
 # 🛠️ Instalación y Configuración
