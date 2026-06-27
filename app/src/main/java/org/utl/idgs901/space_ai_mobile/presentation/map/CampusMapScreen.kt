@@ -1,6 +1,7 @@
 package org.utl.idgs901.space_ai_mobile.presentation.map
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -45,7 +46,8 @@ fun CampusMapScreen(
     viewModel: CampusMapViewModel = hiltViewModel(),
     locationViewModel: CampusLocationViewModel = hiltViewModel(),
     navigationViewModel: NavigationViewModel = hiltViewModel(),
-    navigationRendererViewModel: NavigationRendererViewModel = hiltViewModel()
+    navigationRendererViewModel: NavigationRendererViewModel = hiltViewModel(),
+    onMoreInfoClick: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val locationState by locationViewModel.uiState.collectAsState()
@@ -84,68 +86,87 @@ fun CampusMapScreen(
                 )
                 NavigationFloatingPanel(state = navigationRendererUiState)
             }
-        }
-    ) { padding ->
-        Box(modifier = Modifier.padding(padding)) {
-            CampusMapView(
-                uiState = uiState,
-                locationState = locationState.campusState,
-                userLocation = locationState.location?.let { LatLng(it.latitude, it.longitude) },
-                navigationState = navigationRendererUiState,
-                onBuildingClick = { viewModel.onEvent(CampusMapEvent.BuildingSelected(it)) }
-            )
+        },
+        content = { padding ->
+            Box(modifier = Modifier.fillMaxSize().padding(padding)) {
+                CampusMapView(
+                    uiState = uiState,
+                    locationState = locationState.campusState,
+                    userLocation = locationState.location?.let { LatLng(it.latitude, it.longitude) },
+                    navigationState = navigationRendererUiState,
+                    onBuildingClick = { viewModel.onEvent(CampusMapEvent.BuildingSelected(it)) }
+                )
 
-            if (locationState.campusState is CampusLocationState.Outside && !navigationRendererUiState.isRouteVisible) {
-                OutsideWarning(Modifier.align(Alignment.TopCenter).padding(16.dp))
+                if (locationState.campusState is CampusLocationState.Outside && !navigationRendererUiState.isRouteVisible) {
+                    OutsideWarning(Modifier.align(Alignment.TopCenter).padding(16.dp))
+                }
+
+                if (uiState.isLoading || navigationUiState.calculatingRoute) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color(0xFF0D47A1))
+                }
+
+                NavigationInfoCard(
+                    state = navigationRendererUiState,
+                    onClose = { 
+                        navigationViewModel.clearRoute()
+                        viewModel.onEvent(CampusMapEvent.ClearSelection)
+                    },
+                    modifier = Modifier.align(Alignment.BottomCenter)
+                )
             }
-
-            if (uiState.isLoading || navigationUiState.calculatingRoute) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center), color = Color(0xFF0D47A1))
-            }
-
-            NavigationInfoCard(
-                state = navigationRendererUiState,
-                onClose = { 
-                    navigationViewModel.clearRoute()
-                    viewModel.onEvent(CampusMapEvent.ClearSelection)
-                },
-                modifier = Modifier.align(Alignment.BottomCenter)
-            )
         }
+    )
 
-        if (showBottomSheet && !navigationRendererUiState.isRouteVisible) {
-            ModalBottomSheet(
-                onDismissRequest = { viewModel.onEvent(CampusMapEvent.ClearSelection) },
-                sheetState = sheetState,
-                containerColor = Color.White
-            ) {
-                Column {
-                    uiState.selectedBuilding?.let { building ->
-                        BuildingDetails(building)
-                        
-                        Button(
-                            onClick = {
-                                locationState.location?.let { loc ->
-                                    navigationViewModel.calculateRoute(loc.latitude, loc.longitude, building)
-                                }
-                                showBottomSheet = false
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 24.dp, vertical = 16.dp),
-                            colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
-                            shape = RoundedCornerShape(12.dp)
-                        ) {
-                            Icon(Icons.Default.Directions, contentDescription = null)
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text("Cómo llegar")
-                        }
+    if (showBottomSheet && !navigationRendererUiState.isRouteVisible) {
+        ModalBottomSheet(
+            onDismissRequest = { viewModel.onEvent(CampusMapEvent.ClearSelection) },
+            sheetState = sheetState,
+            containerColor = Color.White
+        ) {
+            Column {
+                uiState.selectedBuilding?.let { building ->
+                    BuildingDetails(building)
+                    
+                    Button(
+                        onClick = {
+                            locationState.location?.let { loc ->
+                                navigationViewModel.calculateRoute(loc.latitude, loc.longitude, building)
+                            }
+                            showBottomSheet = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 16.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
+                        shape = RoundedCornerShape(12.dp)
+                    ) {
+                        Icon(Icons.Default.Directions, contentDescription = null)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Cómo llegar")
+                    }
+
+                    OutlinedButton(
+                        onClick = {
+                            onMoreInfoClick()
+                            showBottomSheet = false
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp, vertical = 0.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(1.dp, Color(0xFF0D47A1))
+                    ) {
+                        Icon(Icons.Default.Info, contentDescription = null, tint = Color(0xFF0D47A1))
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text("Más información", color = Color(0xFF0D47A1))
                     }
                     
-                    if (locationState.location != null) {
-                        HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
-                        UserLocationInfo(locationState)
-                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                }
+                
+                if (locationState.location != null) {
+                    HorizontalDivider(modifier = Modifier.padding(horizontal = 24.dp))
+                    UserLocationInfo(locationState)
                 }
             }
         }
@@ -173,11 +194,11 @@ fun CampusMapView(
                     // 0. FORZAR Fondo Limpio (Eliminar amarillo de la capa base)
                     val backgroundLayer = style.getLayer("background")
                     if (backgroundLayer != null) {
-                        backgroundLayer.setProperties(backgroundColor("#F1F5F9"))
+                        backgroundLayer.setProperties(backgroundColor("#FFFFFF"))
                     } else {
                         // Si no existe, creamos una capa de fondo sólida para cubrir todo el lienzo
                         style.addLayerAt(BackgroundLayer("custom-background").withProperties(
-                            backgroundColor("#F1F5F9")
+                            backgroundColor("#FFFFFF")
                         ), 0)
                     }
 
@@ -401,13 +422,23 @@ fun OutsideWarning(modifier: Modifier = Modifier) {
 
 @Composable
 fun BuildingDetails(building: Building) {
-    Column(modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 48.dp)) {
+    Column(modifier = Modifier.fillMaxWidth().padding(start = 24.dp, end = 24.dp, bottom = 16.dp)) {
         Text(building.name, fontSize = 24.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
-        Text(building.category.uppercase(), fontSize = 12.sp, color = Color.Gray, letterSpacing = 1.sp)
+        Text(translateCategory(building.category).uppercase(), fontSize = 12.sp, color = Color.Gray, letterSpacing = 1.sp)
         Spacer(modifier = Modifier.height(24.dp))
         DetailRow("Pisos", building.levels.toString(), Icons.Default.Layers)
-        DetailRow("Altura", "${building.height} metros", Icons.Default.Height)
-        DetailRow("Estado", building.status, Icons.Default.CheckCircle)
+    }
+}
+
+private fun translateCategory(category: String): String {
+    return when (category.lowercase()) {
+        "academic" -> "Académico"
+        "services" -> "Servicios"
+        "library" -> "Biblioteca"
+        "administration" -> "Administración"
+        "sports" -> "Deportes"
+        "entrance" -> "Entrada"
+        else -> category
     }
 }
 

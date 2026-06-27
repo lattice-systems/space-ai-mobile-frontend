@@ -99,13 +99,12 @@ fun DashboardScreen() {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
         ) {
             when (selectedTab) {
-                DashboardTab.Identity -> IdentityScreen()
-                DashboardTab.Map -> CampusMapScreen()
+                DashboardTab.Identity -> Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) { IdentityScreen() }
+                DashboardTab.Map -> CampusMapScreen(onMoreInfoClick = { selectedTab = DashboardTab.AI })
                 else -> {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                         Text("Próximamente: ${selectedTab.label}", color = Color.Gray)
                     }
                 }
