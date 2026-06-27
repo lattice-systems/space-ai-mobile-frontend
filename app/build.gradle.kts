@@ -68,6 +68,10 @@ dependencies {
     // QR
     implementation(libs.zxing.core)
 
+    // Map
+    implementation(libs.maplibre.android)
+    implementation(libs.play.services.location)
+
     // Networking
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
