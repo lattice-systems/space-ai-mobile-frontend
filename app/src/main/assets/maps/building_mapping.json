@@ -1,0 +1,181 @@
+{
+  "description": "Mapping de way IDs del archivo map.osm a nombres institucionales de la UTL",
+  "source": "app/src/main/assets/maps/map.osm",
+  "campus": "Universidad Tecnológica de León",
+  "buildings": [
+    {
+      "osm_way_id": "224753362",
+      "name": "Biblioteca",
+      "category": "library",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#1E88E5",
+      "icon": "library_books",
+      "centroid_lat": 21.0629924,
+      "centroid_lon": -101.5812041
+    },
+    {
+      "osm_way_id": "224753366",
+      "name": "Rectoría",
+      "category": "administration",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#004A99",
+      "icon": "business",
+      "centroid_lat": 21.0628264,
+      "centroid_lon": -101.5808255
+    },
+    {
+      "osm_way_id": "224753374",
+      "name": "CVD",
+      "category": "services",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#00D1FF",
+      "icon": "apartment",
+      "centroid_lat": 21.0634732,
+      "centroid_lon": -101.5797909
+    },
+    {
+      "osm_way_id": "224753371",
+      "name": "León Cósmico",
+      "category": "landmark",
+      "building_levels": 1,
+      "height": 6,
+      "color": "#C9A227",
+      "icon": "place",
+      "centroid_lat": 21.0636972,
+      "centroid_lon": -101.5805127
+    },
+    {
+      "osm_way_id": "224753359",
+      "name": "Edificio A",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0640652,
+      "centroid_lon": -101.5819382
+    },
+    {
+      "osm_way_id": "224753370",
+      "name": "Edificio A Pesado",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0632934,
+      "centroid_lon": -101.5791242
+    },
+    {
+      "osm_way_id": "224753364",
+      "name": "Edificio B",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0644249,
+      "centroid_lon": -101.5834495
+    },
+    {
+      "osm_way_id": "224753369",
+      "name": "Edificio B Pesado",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0642713,
+      "centroid_lon": -101.5827054
+    },
+    {
+      "osm_way_id": "224753360",
+      "name": "Edificio C",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0629412,
+      "centroid_lon": -101.5821717
+    },
+    {
+      "osm_way_id": "224753375",
+      "name": "Edificio C Pesado",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0633617,
+      "centroid_lon": -101.5826303
+    },
+    {
+      "osm_way_id": "224753365",
+      "name": "Edificio D",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0627936,
+      "centroid_lon": -101.5802845
+    },
+    {
+      "osm_way_id": "224753368",
+      "name": "Edificio E",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0638354,
+      "centroid_lon": -101.5811616
+    },
+    {
+      "osm_way_id": "224753363",
+      "name": "Edificio F",
+      "category": "academic",
+      "building_levels": 2,
+      "height": 8,
+      "color": "#546E7A",
+      "icon": "school",
+      "centroid_lat": 21.0627526,
+      "centroid_lon": -101.5785965
+    }
+  ],
+  "sports": [
+    {
+      "osm_way_id": "224753361",
+      "name": "Campo de fútbol",
+      "category": "sports",
+      "icon": "sports_soccer",
+      "color": "#388E3C",
+      "centroid_lat": 21.0634699,
+      "centroid_lon": -101.5839540
+    },
+    {
+      "osm_way_id": "224753367",
+      "name": "Canchas deportivas",
+      "category": "sports",
+      "icon": "sports",
+      "color": "#388E3C",
+      "centroid_lat": 21.0646360,
+      "centroid_lon": -101.5840752
+    }
+  ],
+  "entrances": [
+    {
+      "osm_way_id": "557924891",
+      "name": "Entrada Principal",
+      "category": "entrance",
+      "icon": "door_front",
+      "color": "#2E7D32",
+      "centroid_lat": 21.0626202,
+      "centroid_lon": -101.5818894
+    }
+  ]
+}
