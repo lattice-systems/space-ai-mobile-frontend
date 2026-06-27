@@ -71,6 +71,7 @@ dependencies {
     // Map
     implementation(libs.maplibre.android)
     implementation(libs.play.services.location)
+    implementation(libs.kotlinx.coroutines.play.services)
 
     // Networking
     implementation(libs.retrofit)
