@@ -1,0 +1,17 @@
+[
+  { "id": "rectoria", "name": "Rectoría", "category": "administracion", "icon": "business" },
+  { "id": "biblioteca", "name": "Biblioteca", "category": "biblioteca", "icon": "library_books" },
+  { "id": "cafeteria", "name": "Cafetería", "category": "servicios", "icon": "restaurant" },
+  { "id": "cvd", "name": "Edificio CVD", "category": "academico", "icon": "apartment" },
+  { "id": "edificio_a", "name": "Edificio A", "category": "academico", "icon": "school" },
+  { "id": "edificio_a_pesado", "name": "Edificio A Pesado", "category": "academico", "icon": "school" },
+  { "id": "edificio_b", "name": "Edificio B", "category": "academico", "icon": "school" },
+  { "id": "edificio_b_pesado", "name": "Edificio B Pesado", "category": "academico", "icon": "school" },
+  { "id": "edificio_c", "name": "Edificio C", "category": "academico", "icon": "school" },
+  { "id": "edificio_c_pesado", "name": "Edificio C Pesado", "category": "academico", "icon": "school" },
+  { "id": "edificio_d", "name": "Edificio D", "category": "academico", "icon": "school" },
+  { "id": "edificio_e", "name": "Edificio E", "category": "academico", "icon": "school" },
+  { "id": "edificio_f", "name": "Edificio F", "category": "academico", "icon": "school" },
+  { "id": "entrada_principal", "name": "Entrada Principal", "category": "acceso", "icon": "door_front" },
+  { "id": "campo_futbol", "name": "Campo de fútbol", "category": "deportes", "icon": "sports_soccer" }
+]
