@@ -18,6 +18,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import org.utl.idgs901.space_ai_mobile.presentation.identity.IdentityScreen
+import org.utl.idgs901.space_ai_mobile.presentation.map.CampusMapScreen
 
 sealed class DashboardTab(val route: String, val icon: ImageVector, val label: String) {
     object Home : DashboardTab("home", Icons.Default.GridView, "Inicio")
@@ -102,6 +103,7 @@ fun DashboardScreen() {
         ) {
             when (selectedTab) {
                 DashboardTab.Identity -> IdentityScreen()
+                DashboardTab.Map -> CampusMapScreen()
                 else -> {
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text("Próximamente: ${selectedTab.label}", color = Color.Gray)
