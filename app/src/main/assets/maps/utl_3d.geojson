@@ -1,0 +1,450 @@
+{
+  "type": "FeatureCollection",
+  "generator": "SpaceIA-OSM-Extract",
+  "source": "map.osm",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cafeteria",
+        "name": "Cafetería",
+        "category": "services",
+        "building": true,
+        "building:levels": 1,
+        "height": 4,
+        "render_style": "institutional_minimal",
+        "color": "#FF9800",
+        "icon": "restaurant",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5808288, 21.0630457],
+          [-101.5809534, 21.0628868],
+          [-101.5809418, 21.0628708],
+          [-101.5808972, 21.0629298],
+          [-101.5808781, 21.0629272],
+          [-101.5808674, 21.0626597],
+          [-101.5807894, 21.0626590],
+          [-101.5807787, 21.0625462],
+          [-101.5806799, 21.0625196],
+          [-101.5806370, 21.0629994],
+          [-101.5808288, 21.0630457]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "biblioteca",
+        "name": "Biblioteca",
+        "category": "library",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#1E88E5",
+        "icon": "library_books",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5814380, 21.0630060],
+          [-101.5814968, 21.0627844],
+          [-101.5813318, 21.0627405],
+          [-101.5810892, 21.0626741],
+          [-101.5810332, 21.0628604],
+          [-101.5810383, 21.0629109],
+          [-101.5810115, 21.0629960],
+          [-101.5809847, 21.0631111],
+          [-101.5809895, 21.0631453],
+          [-101.5811773, 21.0632004],
+          [-101.5812738, 21.0632254],
+          [-101.5813516, 21.0632404],
+          [-101.5814380, 21.0630060]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_e",
+        "name": "Edificio E",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5799733, 21.0635144],
+          [-101.5799664, 21.0633338],
+          [-101.5794216, 21.0633612],
+          [-101.5794382, 21.0635700],
+          [-101.5799723, 21.0635451],
+          [-101.5799733, 21.0635144]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_d",
+        "name": "Edificio D",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5806974, 21.0637493],
+          [-101.5806852, 21.0635380],
+          [-101.5801416, 21.0635654],
+          [-101.5801554, 21.0638043],
+          [-101.5806990, 21.0637770],
+          [-101.5806974, 21.0637493]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_c",
+        "name": "Edificio C",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5821276, 21.0641170],
+          [-101.5821296, 21.0641513],
+          [-101.5815719, 21.0641793],
+          [-101.5815574, 21.0639272],
+          [-101.5821151, 21.0638991],
+          [-101.5821276, 21.0641170]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_f",
+        "name": "Edificio F",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5793001, 21.0633447],
+          [-101.5792925, 21.0631477],
+          [-101.5787716, 21.0631650],
+          [-101.5787801, 21.0633877],
+          [-101.5793010, 21.0633704],
+          [-101.5793001, 21.0633447]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_b_pesado",
+        "name": "Edificio B Pesado",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5836393, 21.0644767],
+          [-101.5836413, 21.0645114],
+          [-101.5830826, 21.0645396],
+          [-101.5830680, 21.0642864],
+          [-101.5836267, 21.0642583],
+          [-101.5836393, 21.0644767]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_b",
+        "name": "Edificio B",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5828938, 21.0643232],
+          [-101.5828957, 21.0643561],
+          [-101.5823410, 21.0643840],
+          [-101.5823265, 21.0641346],
+          [-101.5828813, 21.0641067],
+          [-101.5828938, 21.0643232]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_a_pesado",
+        "name": "Edificio A Pesado",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5823617, 21.0629864],
+          [-101.5823636, 21.0630031],
+          [-101.5818260, 21.0630233],
+          [-101.5817750, 21.0628354],
+          [-101.5823420, 21.0628125],
+          [-101.5823617, 21.0629864]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_a",
+        "name": "Edificio A",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5828118, 21.0634147],
+          [-101.5828140, 21.0634519],
+          [-101.5822835, 21.0634702],
+          [-101.5822619, 21.0632247],
+          [-101.5827990, 21.0631938],
+          [-101.5828118, 21.0634147]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "cvd",
+        "name": "Edificio CVD",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5804187, 21.0630010],
+          [-101.5803275, 21.0629710],
+          [-101.5802095, 21.0629359],
+          [-101.5800218, 21.0628909],
+          [-101.5800057, 21.0628859],
+          [-101.5801232, 21.0624970],
+          [-101.5802954, 21.0625454],
+          [-101.5804718, 21.0625921],
+          [-101.5805528, 21.0626155],
+          [-101.5804187, 21.0630010]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "edificio_c_pesado",
+        "name": "Edificio C Pesado",
+        "category": "academic",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#546E7A",
+        "icon": "school",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5814234, 21.0639042],
+          [-101.5811650, 21.0639163],
+          [-101.5809131, 21.0639245],
+          [-101.5808724, 21.0637455],
+          [-101.5809167, 21.0637373],
+          [-101.5814168, 21.0637160],
+          [-101.5814234, 21.0639042]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "rectoria",
+        "name": "Rectoría",
+        "category": "administration",
+        "building": true,
+        "building:levels": 2,
+        "height": 8,
+        "render_style": "institutional_minimal",
+        "color": "#0D47A1",
+        "icon": "business",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5787981, 21.0628124],
+          [-101.5788374, 21.0626513],
+          [-101.5787027, 21.0626227],
+          [-101.5783766, 21.0625535],
+          [-101.5783376, 21.0627134],
+          [-101.5784392, 21.0627350],
+          [-101.5784096, 21.0628565],
+          [-101.5786066, 21.0628983],
+          [-101.5786196, 21.0628451],
+          [-101.5786359, 21.0627780],
+          [-101.5787981, 21.0628124]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "entrada_principal",
+        "name": "Entrada Principal",
+        "category": "entrance",
+        "building": true,
+        "building:levels": 1,
+        "height": 4,
+        "render_style": "institutional_minimal",
+        "color": "#2E7D32",
+        "icon": "door_front",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5820990, 21.0626487],
+          [-101.5816398, 21.0625200],
+          [-101.5816900, 21.0625923],
+          [-101.5818251, 21.0626376],
+          [-101.5819837, 21.0626739],
+          [-101.5820990, 21.0626487]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "campo_futbol",
+        "name": "Campo de fútbol",
+        "category": "sports",
+        "building": false,
+        "building:levels": 0,
+        "height": 0.5,
+        "render_style": "sports_field",
+        "color": "#388E3C",
+        "icon": "sports_soccer",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5841598, 21.0638815],
+          [-101.5842378, 21.0636230],
+          [-101.5842612, 21.0635454],
+          [-101.5843398, 21.0632848],
+          [-101.5840741, 21.0632150],
+          [-101.5836972, 21.0631160],
+          [-101.5834182, 21.0630426],
+          [-101.5832381, 21.0636393],
+          [-101.5841598, 21.0638815]
+        ]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "canchas_deportivas",
+        "name": "Canchas deportivas",
+        "category": "sports",
+        "building": false,
+        "building:levels": 0,
+        "height": 0.5,
+        "render_style": "sports_field",
+        "color": "#388E3C",
+        "icon": "sports",
+        "navigation": true
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[
+          [-101.5842585, 21.0644834],
+          [-101.5841687, 21.0644621],
+          [-101.5840482, 21.0644336],
+          [-101.5838755, 21.0643927],
+          [-101.5837197, 21.0649658],
+          [-101.5841027, 21.0650565],
+          [-101.5841696, 21.0648104],
+          [-101.5842585, 21.0644834]
+        ]]
+      }
+    }
+  ]
+}
