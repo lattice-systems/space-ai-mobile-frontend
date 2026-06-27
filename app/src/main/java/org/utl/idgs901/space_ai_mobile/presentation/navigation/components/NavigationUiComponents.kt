@@ -20,6 +20,7 @@ import org.utl.idgs901.space_ai_mobile.presentation.navigation.NavigationRendere
 fun NavigationInfoCard(
     state: NavigationRendererUiState,
     onClose: () -> Unit,
+    onStartNavigation: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -76,6 +77,19 @@ fun NavigationInfoCard(
                         icon = Icons.Default.DirectionsWalk,
                         modifier = Modifier.weight(1f)
                     )
+                }
+
+                Spacer(modifier = Modifier.height(24.dp))
+
+                Button(
+                    onClick = onStartNavigation,
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF0D47A1)),
+                    shape = RoundedCornerShape(12.dp)
+                ) {
+                    Icon(Icons.Default.Navigation, contentDescription = null)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text("Iniciar Navegación")
                 }
             }
         }
