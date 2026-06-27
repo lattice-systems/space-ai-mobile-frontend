@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.location.LocationServices
+import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
 import org.maplibre.android.maps.MapView
@@ -28,16 +28,19 @@ import org.maplibre.android.style.layers.PropertyFactory.*
 import org.maplibre.android.style.light.Position
 import org.maplibre.android.style.sources.GeoJsonSource
 import org.utl.idgs901.space_ai_mobile.domain.map.model.Building
-import org.utl.idgs901.space_ai_mobile.domain.map.model.CampusLocationState
+import org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState
+import org.utl.idgs901.space_ai_mobile.presentation.location.CampusLocationViewModel
+import org.utl.idgs901.space_ai_mobile.presentation.location.components.CampusStatusIndicator
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CampusMapScreen(
-    viewModel: CampusMapViewModel = hiltViewModel()
+    viewModel: CampusMapViewModel = hiltViewModel(),
+    locationViewModel: CampusLocationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val locationState by locationViewModel.uiState.collectAsState()
     val context = LocalContext.current
-    val fusedLocationClient = remember { LocationServices.getFusedLocationProviderClient(context) }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -45,22 +48,16 @@ fun CampusMapScreen(
         showBottomSheet = uiState.selectedBuilding != null
     }
 
-    LaunchedEffect(Unit) {
-        try {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location ->
-                location?.let {
-                    viewModel.onEvent(CampusMapEvent.UserLocationUpdated(it.latitude, it.longitude))
-                }
-            }
-        } catch (e: SecurityException) {
-        }
-    }
-
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
                 title = { Text("Smart Campus UTL", fontWeight = FontWeight.Bold, color = Color(0xFF0D47A1)) },
-                actions = { CampusStatusIndicator(uiState.locationState) },
+                actions = { 
+                    CampusStatusIndicator(
+                        state = locationState.campusState,
+                        isLoading = locationState.isLoading
+                    ) 
+                },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
             )
         }
@@ -68,10 +65,12 @@ fun CampusMapScreen(
         Box(modifier = Modifier.padding(padding)) {
             CampusMapView(
                 uiState = uiState,
+                locationState = locationState.campusState,
+                userLocation = locationState.location?.let { LatLng(it.latitude, it.longitude) },
                 onBuildingClick = { viewModel.onEvent(CampusMapEvent.BuildingSelected(it)) }
             )
 
-            if (uiState.locationState is CampusLocationState.Outside) {
+            if (locationState.campusState is CampusLocationState.Outside) {
                 OutsideWarning(Modifier.align(Alignment.TopCenter).padding(16.dp))
             }
 
@@ -86,14 +85,27 @@ fun CampusMapScreen(
                 sheetState = sheetState,
                 containerColor = Color.White
             ) {
-                uiState.selectedBuilding?.let { BuildingDetails(it) }
+                Column {
+                    uiState.selectedBuilding?.let { BuildingDetails(it) }
+                    
+                    // Show current location in bottom sheet if relevant
+                    if (locationState.location != null) {
+                        Divider(modifier = Modifier.padding(horizontal = 24.dp))
+                        UserLocationInfo(locationState)
+                    }
+                }
             }
         }
     }
 }
 
 @Composable
-fun CampusMapView(uiState: CampusMapUiState, onBuildingClick: (Building) -> Unit) {
+fun CampusMapView(
+    uiState: CampusMapUiState,
+    locationState: CampusLocationState,
+    userLocation: LatLng?,
+    onBuildingClick: (Building) -> Unit
+) {
     val context = LocalContext.current
     val utlCenter = LatLng(21.0630, -101.5815)
     
@@ -128,46 +140,40 @@ fun CampusMapView(uiState: CampusMapUiState, onBuildingClick: (Building) -> Unit
                             style.addSource(GeoJsonSource(sourceId, geoJson))
                             
                             // 1. Sombra de Contacto Profesional (Ambient Occlusion)
-                            style.addLayer(FillLayer("buildings-shadow", sourceId).apply {
-                                setProperties(
-                                    fillColor("#1E293B"),
-                                    fillOpacity(0.08f),
-                                    fillTranslate(arrayOf(1.5f, 1.5f))
-                                )
-                            })
+                            style.addLayer(FillLayer("buildings-shadow", sourceId).withProperties(
+                                fillColor("#1E293B"),
+                                fillOpacity(0.08f),
+                                fillTranslate(arrayOf(1.5f, 1.5f))
+                            ))
 
                             // 2. Capa Principal de Extrusión 3D (Acabado Moderno)
-                            style.addLayer(FillExtrusionLayer("buildings-layer", sourceId).apply {
-                                setProperties(
-                                    fillExtrusionHeight(get("height")),
-                                    fillExtrusionBase(0f),
-                                    fillExtrusionColor(
-                                        interpolate(
-                                            linear(), get("height"),
-                                            stop(0, "#F1F5F9"), // Base clara y limpia
-                                            stop(8, get("color")) // Color institucional
-                                        )
-                                    ),
-                                    fillExtrusionOpacity(0.95f),
-                                    fillExtrusionVerticalGradient(true)
-                                )
-                            })
+                            style.addLayer(FillExtrusionLayer("buildings-layer", sourceId).withProperties(
+                                fillExtrusionHeight(get("height")),
+                                fillExtrusionBase(0f),
+                                fillExtrusionColor(
+                                    interpolate(
+                                        linear(), get("height"),
+                                        stop(0, "#F1F5F9"), // Base clara y limpia
+                                        stop(8, get("color")) // Color institucional
+                                    )
+                                ),
+                                fillExtrusionOpacity(0.95f),
+                                fillExtrusionVerticalGradient(true)
+                            ))
 
                             // 3. Etiquetas Minimalistas de Alta Legibilidad
-                            style.addLayer(SymbolLayer("labels-layer", sourceId).apply {
-                                setProperties(
-                                    textField(get("name")),
-                                    textSize(10.5f),
-                                    textColor("#334155"),
-                                    textHaloColor("#FFFFFF"),
-                                    textHaloWidth(2.5f),
-                                    textHaloBlur(1f),
-                                    textAnchor("center"),
-                                    textTransform("uppercase"),
-                                    textLetterSpacing(0.1f),
-                                    textAllowOverlap(false)
-                                )
-                            })
+                            style.addLayer(SymbolLayer("labels-layer", sourceId).withProperties(
+                                textField(get("name")),
+                                textSize(10.5f),
+                                textColor("#334155"),
+                                textHaloColor("#FFFFFF"),
+                                textHaloWidth(2.5f),
+                                textHaloBlur(1f),
+                                textAnchor("center"),
+                                textTransform("uppercase"),
+                                textLetterSpacing(0.1f),
+                                textAllowOverlap(false)
+                            ))
                         }
                     }
                     
@@ -177,24 +183,63 @@ fun CampusMapView(uiState: CampusMapUiState, onBuildingClick: (Building) -> Unit
                             style.addSource(GeoJsonSource(sourceId, geoJson))
                             
                             // Senderos de concreto moderno
-                            style.addLayer(LineLayer("walkways-layer", sourceId).apply {
-                                setProperties(
-                                    lineColor("#CBD5E1"),
-                                    lineWidth(3f),
-                                    lineOpacity(0.6f),
-                                    lineCap("round"),
-                                    lineJoin("round")
-                                )
-                            })
+                            style.addLayer(LineLayer("walkways-layer", sourceId).withProperties(
+                                lineColor("#CBD5E1"),
+                                lineWidth(3f),
+                                lineOpacity(0.6f),
+                                lineCap("round"),
+                                lineJoin("round")
+                            ))
+                        }
+                    }
+
+                    // User Location Marker
+                    userLocation?.let { location ->
+                        val userSourceId = "user-location-source"
+                        val geoJson = """
+                            {
+                                "type": "FeatureCollection",
+                                "features": [
+                                    {
+                                        "type": "Feature",
+                                        "geometry": {
+                                            "type": "Point",
+                                            "coordinates": [${location.longitude}, ${location.latitude}]
+                                        }
+                                    }
+                                ]
+                            }
+                        """.trimIndent()
+
+                        val source = style.getSource(userSourceId) as? GeoJsonSource
+                        if (source == null) {
+                            style.addSource(GeoJsonSource(userSourceId, geoJson))
+                            
+                            // Blue dot for user
+                            style.addLayer(CircleLayer("user-location-layer", userSourceId).withProperties(
+                                circleColor("#2196F3"),
+                                circleRadius(8f),
+                                circleStrokeColor("#FFFFFF"),
+                                circleStrokeWidth(2f)
+                            ))
+                        } else {
+                            source.setGeoJson(geoJson)
                         }
                     }
                 }
-                map.cameraPosition = CameraPosition.Builder()
-                    .target(utlCenter)
-                    .zoom(17.8)
-                    .tilt(60.0) // Máximo tilt permitido para evitar errores de validación
-                    .bearing(-15.0) // Ligera rotación para mejor perspectiva
-                    .build()
+
+                // Camera logic
+                if (locationState is org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState.Inside && userLocation != null) {
+                    map.animateCamera(CameraUpdateFactory.newLatLng(userLocation), 1000)
+                } else {
+                    map.cameraPosition = CameraPosition.Builder()
+                        .target(utlCenter)
+                        .zoom(17.8)
+                        .tilt(60.0)
+                        .bearing(-15.0)
+                        .build()
+                }
+
                 map.addOnMapClickListener { point ->
                     val features = map.queryRenderedFeatures(map.projection.toScreenLocation(point), "buildings-layer")
                     if (features.isNotEmpty()) {
@@ -252,6 +297,28 @@ fun DetailRow(label: String, value: String, icon: androidx.compose.ui.graphics.v
         Column {
             Text(label, fontSize = 12.sp, color = Color.Gray)
             Text(value, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = Color(0xFF334155))
+        }
+    }
+}
+
+@Composable
+fun UserLocationInfo(state: org.utl.idgs901.space_ai_mobile.presentation.location.CampusLocationUiState) {
+    Column(modifier = Modifier.fillMaxWidth().padding(24.dp)) {
+        Text("Mi Ubicación", fontSize = 18.sp, fontWeight = FontWeight.Bold, color = Color(0xFF1E293B))
+        Spacer(modifier = Modifier.height(16.dp))
+        state.location?.let { loc ->
+            DetailRow("Latitud", loc.latitude.toString(), Icons.Default.LocationOn)
+            DetailRow("Longitud", loc.longitude.toString(), Icons.Default.Map)
+            DetailRow("Precisión", "${loc.accuracy} metros", Icons.Default.GpsFixed)
+            
+            val statusText = if (state.campusState is org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState.Inside) "Dentro del campus" else "Fuera del campus"
+            val statusColor = if (state.campusState is org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState.Inside) Color(0xFF4CAF50) else Color(0xFFF44336)
+            
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(vertical = 8.dp)) {
+                Icon(Icons.Default.Info, contentDescription = null, tint = statusColor, modifier = Modifier.size(20.dp))
+                Spacer(modifier = Modifier.width(16.dp))
+                Text(statusText, fontSize = 16.sp, fontWeight = FontWeight.SemiBold, color = statusColor)
+            }
         }
     }
 }
