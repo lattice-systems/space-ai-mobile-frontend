@@ -23,9 +23,9 @@ fun CampusStatusIndicator(state: CampusLocationState, isLoading: Boolean = false
     }
     
     val text = when (state) {
-        is CampusLocationState.Inside -> "Dentro del campus"
-        is CampusLocationState.Outside -> "Fuera del campus"
-        is CampusLocationState.Unknown -> if (isLoading) "Obteniendo ubicación..." else "Ubicación desconocida"
+        is CampusLocationState.Inside -> "Activo"
+        is CampusLocationState.Outside -> "Desconectado"
+        is CampusLocationState.Unknown -> if (isLoading) "Obteniendo ubicación..." else "Sin conexión"
     }
 
     Surface(

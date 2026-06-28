@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.launch
 import org.maplibre.android.camera.CameraUpdateFactory
 import org.maplibre.android.camera.CameraPosition
 import org.maplibre.android.geometry.LatLng
@@ -54,6 +55,8 @@ fun CampusMapScreen(
     val navigationSessionUiState by navigationSessionViewModel.uiState.collectAsState()
     
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+    val snackbarHostState = remember { SnackbarHostState() }
     val sheetState = rememberModalBottomSheetState()
     var showBottomSheet by remember { mutableStateOf(false) }
 
@@ -97,6 +100,7 @@ fun CampusMapScreen(
                 }
             }
         },
+        snackbarHost = { SnackbarHost(snackbarHostState) },
         content = { padding ->
             Box(modifier = Modifier.fillMaxSize().padding(if (navigationSessionUiState.isNavigating) PaddingValues(0.dp) else padding)) {
                 CampusMapView(
@@ -164,10 +168,19 @@ fun CampusMapScreen(
                     
                     Button(
                         onClick = {
-                            locationState.location?.let { loc ->
-                                navigationViewModel.calculateRoute(loc.latitude, loc.longitude, building)
+                            if (locationState.campusState is CampusLocationState.Inside) {
+                                locationState.location?.let { loc ->
+                                    navigationViewModel.calculateRoute(loc.latitude, loc.longitude, building)
+                                }
+                                showBottomSheet = false
+                            } else {
+                                scope.launch {
+                                    snackbarHostState.showSnackbar(
+                                        message = "Necesitas estar dentro de la universidad para obtener la ruta.",
+                                        duration = SnackbarDuration.Short
+                                    )
+                                }
                             }
-                            showBottomSheet = false
                         },
                         modifier = Modifier
                             .fillMaxWidth()
