@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIAMotion
 
 @Composable
 fun SplashScreen(
@@ -40,9 +41,23 @@ fun SplashScreen(
         }
     }
 
+    var startExitAnim by remember { mutableStateOf(false) }
+    val exitAlpha by animateFloatAsState(
+        targetValue = if (startExitAnim) 0f else 1f,
+        animationSpec = tween(SpaceIAMotion.Duration.Normal),
+        label = "ExitAlpha"
+    )
+
+    LaunchedEffect(uiState.shouldNavigateToLogin) {
+        if (uiState.shouldNavigateToLogin) {
+            startExitAnim = true
+        }
+    }
+
     BoxWithConstraints(
         modifier = Modifier
             .fillMaxSize()
+            .alpha(exitAlpha)
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
@@ -99,7 +114,7 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
         initialValue = -10f,
         targetValue = 10f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = EaseInOutSine),
+            animation = tween(2000, easing = SpaceIAMotion.Easing.Smooth),
             repeatMode = RepeatMode.Reverse
         ),
         label = "Floating"
@@ -107,6 +122,16 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
 
     val scaleAnim = remember { Animatable(0.5f) }
     val alphaAnim = remember { Animatable(0f) }
+
+    val glowAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.3f,
+        targetValue = 0.7f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500, easing = SpaceIAMotion.Easing.Smooth),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "Glow"
+    )
 
     LaunchedEffect(Unit) {
         scaleAnim.animateTo(
@@ -119,27 +144,42 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
         alphaAnim.animateTo(1f, tween(1000))
     }
 
-    Surface(
-        modifier = Modifier
-            .size(if (isSmallScreen) 100.dp else 128.dp)
-            .graphicsLayer {
-                translationY = floatAnim
-                scaleX = scaleAnim.value
-                scaleY = scaleAnim.value
-                alpha = alphaAnim.value
+    Box(contentAlignment = Alignment.Center) {
+        // Institutional Glow
+        Surface(
+            modifier = Modifier
+                .size(if (isSmallScreen) 120.dp else 150.dp)
+                .graphicsLayer {
+                    scaleX = scaleAnim.value * 1.2f
+                    scaleY = scaleAnim.value * 1.2f
+                    alpha = alphaAnim.value * glowAlpha
+                },
+            shape = RoundedCornerShape(40.dp),
+            color = Color(0xFF0D47A1).copy(alpha = 0.2f)
+        ) {}
+
+        Surface(
+            modifier = Modifier
+                .size(if (isSmallScreen) 100.dp else 128.dp)
+                .graphicsLayer {
+                    translationY = floatAnim
+                    scaleX = scaleAnim.value
+                    scaleY = scaleAnim.value
+                    alpha = alphaAnim.value
+                }
+                .clip(RoundedCornerShape(32.dp)),
+            shape = RoundedCornerShape(32.dp),
+            color = Color.White,
+            shadowElevation = 16.dp
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    imageVector = Icons.Default.Face,
+                    contentDescription = "Logotipo de SpaceIA",
+                    tint = Color(0xFF0D47A1),
+                    modifier = Modifier.size(if (isSmallScreen) 50.dp else 64.dp)
+                )
             }
-            .clip(RoundedCornerShape(32.dp)),
-        shape = RoundedCornerShape(32.dp),
-        color = Color.White,
-        shadowElevation = 16.dp
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                imageVector = Icons.Default.Face,
-                contentDescription = "Logotipo de SpaceIA",
-                tint = Color(0xFF0D47A1),
-                modifier = Modifier.size(if (isSmallScreen) 50.dp else 64.dp)
-            )
         }
     }
 }
@@ -175,7 +215,12 @@ private fun AnimatedTextSection() {
             fontSize = 42.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF0D47A1),
-            letterSpacing = (-1).sp
+            letterSpacing = (-1).sp,
+            modifier = Modifier.graphicsLayer {
+                alpha = alphaText
+                scaleX = 0.9f + (0.1f * alphaText)
+                scaleY = 0.9f + (0.1f * alphaText)
+            }
         )
         
         Text(

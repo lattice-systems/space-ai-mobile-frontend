@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.qrcode.QRCodeWriter
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.*
 
 @Composable
 fun IdentityScreen(
@@ -42,17 +43,22 @@ fun IdentityScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(horizontal = if (isSmallScreen) 16.dp else 24.dp, vertical = 16.dp),
+                .padding(horizontal = if (isSmallScreen) 16.dp else 24.dp, vertical = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(16.dp))
             Text(
-                text = "Identidad Digital",
+                text = "Acceso QR",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color.Black
+                color = Color.Black,
+                modifier = Modifier.spaceIAStaggeredEntrance(0)
             )
             
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.spaceIAStaggeredEntrance(1)
+            ) {
                 Icon(
                     Icons.Default.CheckCircle, 
                     contentDescription = null, 
@@ -73,7 +79,8 @@ fun IdentityScreen(
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .widthIn(max = 500.dp),
+                    .widthIn(max = 500.dp)
+                    .spaceIAStaggeredEntrance(2),
                 shape = RoundedCornerShape(32.dp),
                 colors = CardDefaults.cardColors(containerColor = Color(0xFF0D47A1))
             ) {
@@ -127,57 +134,68 @@ fun IdentityScreen(
                     Surface(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(260.dp),
+                            .height(280.dp),
                         shape = RoundedCornerShape(24.dp),
                         color = Color.White.copy(alpha = 0.15f)
                     ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
                         ) {
-                            Box(
-                                modifier = Modifier
-                                    .size(160.dp)
-                                    .background(Color.White, RoundedCornerShape(16.dp))
-                                    .padding(8.dp),
-                                contentAlignment = Alignment.Center
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
                             ) {
-                                if (uiState.isLoading) {
-                                    CircularProgressIndicator(color = Color(0xFF0D47A1))
-                                } else {
-                                    uiState.qrIdentity?.qrToken?.let { token ->
-                                        QrCodeImage(token)
+                                Box(
+                                    modifier = Modifier
+                                        .size(160.dp)
+                                        .background(Color.White, RoundedCornerShape(16.dp))
+                                        .padding(8.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (uiState.isLoading) {
+                                        CircularProgressIndicator(color = Color(0xFF0D47A1))
+                                    } else {
+                                        uiState.qrIdentity?.qrToken?.let { token ->
+                                            QrCodeImage(token)
+                                        }
                                     }
                                 }
-                            }
 
-                            Spacer(modifier = Modifier.height(16.dp))
+                                Spacer(modifier = Modifier.height(24.dp))
 
-                            Surface(
-                                shape = RoundedCornerShape(16.dp),
-                                color = Color.White.copy(alpha = 0.2f)
-                            ) {
-                                Row(
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                    verticalAlignment = Alignment.CenterVertically
+                                Surface(
+                                    shape = RoundedCornerShape(16.dp),
+                                    color = Color.White.copy(alpha = 0.2f),
+                                    modifier = Modifier.spaceIAPulse(Color.White)
                                 ) {
-                                    Icon(Icons.Default.Timer, contentDescription = null, tint = Color.White, modifier = Modifier.size(14.dp))
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                    Text(
-                                        text = uiState.remainingTimeText,
-                                        color = Color.White,
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold
-                                    )
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            Icons.Default.Timer,
+                                            contentDescription = null,
+                                            tint = Color.White,
+                                            modifier = Modifier.size(14.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = uiState.remainingTimeText,
+                                            color = Color.White,
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold
+                                        )
+                                    }
                                 }
+
+                                Text(
+                                    text = "El código se actualiza automáticamente",
+                                    color = Color.White.copy(alpha = 0.6f),
+                                    fontSize = 10.sp,
+                                    modifier = Modifier.padding(top = 12.dp)
+                                )
                             }
-                            
-                            Text(
-                                text = "El código se actualiza automáticamente por seguridad",
-                                color = Color.White.copy(alpha = 0.6f),
-                                fontSize = 10.sp,
-                                modifier = Modifier.padding(top = 12.dp)
-                            )
                         }
                     }
                 }
@@ -190,13 +208,13 @@ fun IdentityScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 ActionCard(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).spaceIAStaggeredEntrance(3),
                     icon = Icons.Default.QrCodeScanner,
                     label = "Tocar para Acceder",
                     tint = Color(0xFF0D47A1)
                 )
                 ActionCard(
-                    modifier = Modifier.weight(1f),
+                    modifier = Modifier.weight(1f).spaceIAStaggeredEntrance(4),
                     icon = Icons.Default.Wallet,
                     label = "Agregar a Wallet",
                     tint = Color(0xFF4FC3F7)
@@ -226,7 +244,9 @@ fun QrCodeImage(token: String) {
 @Composable
 fun ActionCard(modifier: Modifier, icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: Color) {
     Card(
-        modifier = modifier.height(100.dp),
+        modifier = modifier
+            .height(100.dp)
+            .spaceIAPressScale(),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)

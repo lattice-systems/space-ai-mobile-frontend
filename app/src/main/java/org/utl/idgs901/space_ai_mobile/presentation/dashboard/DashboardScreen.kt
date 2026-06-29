@@ -1,5 +1,7 @@
 package org.utl.idgs901.space_ai_mobile.presentation.dashboard
 
+import androidx.compose.animation.*
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,12 +19,14 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIAMotion
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.spaceIAPressScale
 import org.utl.idgs901.space_ai_mobile.presentation.identity.IdentityScreen
 import org.utl.idgs901.space_ai_mobile.presentation.map.CampusMapScreen
 
 sealed class DashboardTab(val route: String, val icon: ImageVector, val label: String) {
-    object Home : DashboardTab("home", Icons.Default.GridView, "Inicio")
-    object Identity : DashboardTab("identity", Icons.Default.Contactless, "Identidad")
+    object Home : DashboardTab("home", Icons.Default.Home, "Inicio")
+    object Identity : DashboardTab("identity", Icons.Default.Contactless, "QR")
     object Map : DashboardTab("map", Icons.Default.Explore, "Mapa")
     object AI : DashboardTab("ai", Icons.Default.SmartToy, "IA")
     object Academic : DashboardTab("academic", Icons.Default.School, "Académico")
@@ -49,15 +53,11 @@ fun DashboardScreen() {
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .size(36.dp)
-                            .clip(CircleShape),
+                            .clip(CircleShape)
+                            .spaceIAPressScale(),
                         color = Color.LightGray
                     ) {
                         Icon(Icons.Default.Person, contentDescription = "Perfil", modifier = Modifier.padding(6.dp))
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { }) {
-                        Icon(Icons.Default.Notifications, contentDescription = "Notificaciones", tint = Color.DarkGray)
                     }
                 },
                 colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
@@ -82,7 +82,13 @@ fun DashboardScreen() {
                     NavigationBarItem(
                         selected = selectedTab == tab,
                         onClick = { selectedTab = tab },
-                        icon = { Icon(tab.icon, contentDescription = tab.label) },
+                        icon = { 
+                            Icon(
+                                tab.icon, 
+                                contentDescription = tab.label,
+                                modifier = Modifier.animateContentSize()
+                            ) 
+                        },
                         label = { Text(tab.label, fontSize = 10.sp) },
                         colors = NavigationBarItemDefaults.colors(
                             selectedIconColor = Color(0xFF0D47A1),
@@ -96,16 +102,25 @@ fun DashboardScreen() {
             }
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-        ) {
-            when (selectedTab) {
-                DashboardTab.Identity -> Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) { IdentityScreen() }
-                DashboardTab.Map -> CampusMapScreen(onMoreInfoClick = { selectedTab = DashboardTab.AI })
-                else -> {
-                    Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
-                        Text("Próximamente: ${selectedTab.label}", color = Color.Gray)
+        AnimatedContent(
+            targetState = selectedTab,
+            transitionSpec = {
+                fadeIn(animationSpec = tween(300)) + scaleIn(initialScale = 0.98f) togetherWith
+                fadeOut(animationSpec = tween(300))
+            },
+            label = "TabContent"
+        ) { targetTab ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+                when (targetTab) {
+                    DashboardTab.Identity -> Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) { IdentityScreen() }
+                    DashboardTab.Map -> CampusMapScreen(onMoreInfoClick = { selectedTab = DashboardTab.AI })
+                    else -> {
+                        Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
+                            Text("Próximamente: ${targetTab.label}", color = Color.Gray)
+                        }
                     }
                 }
             }

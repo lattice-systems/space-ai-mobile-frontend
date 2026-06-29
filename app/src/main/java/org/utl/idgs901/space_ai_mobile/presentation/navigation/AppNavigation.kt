@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIATransitions
 import org.utl.idgs901.space_ai_mobile.presentation.auth.LoginScreen
 import org.utl.idgs901.space_ai_mobile.presentation.dashboard.DashboardScreen
 import org.utl.idgs901.space_ai_mobile.presentation.splash.SplashScreen
@@ -15,7 +16,11 @@ fun AppNavigation(windowSizeClass: WindowSizeClass) {
 
     NavHost(
         navController = navController,
-        startDestination = "splash"
+        startDestination = "splash",
+        enterTransition = SpaceIATransitions.enterTransition,
+        exitTransition = SpaceIATransitions.exitTransition,
+        popEnterTransition = SpaceIATransitions.popEnterTransition,
+        popExitTransition = SpaceIATransitions.popExitTransition
     ) {
         composable("splash") {
             SplashScreen(

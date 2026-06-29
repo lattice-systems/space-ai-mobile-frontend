@@ -1,5 +1,6 @@
 package org.utl.idgs901.space_ai_mobile.presentation.auth
 
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -30,6 +31,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.*
 
 @Composable
 fun LoginScreen(
@@ -39,12 +41,19 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
+    val haptics = rememberSpaceIAHaptics()
+    val shakeState = rememberSpaceIAShakeState()
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
-                is LoginEffect.NavigateToDashboard -> onNavigateToDashboard()
+                is LoginEffect.NavigateToDashboard -> {
+                    haptics.success()
+                    onNavigateToDashboard()
+                }
                 is LoginEffect.ShowSnackbar -> {
+                    haptics.error()
+                    shakeState.shake()
                     snackbarHostState.showSnackbar(effect.message)
                 }
             }
@@ -54,6 +63,7 @@ fun LoginScreen(
     LoginContent(
         uiState = uiState,
         snackbarHostState = snackbarHostState,
+        shakeState = shakeState,
         onEvent = viewModel::onEvent
     )
 }
@@ -62,6 +72,7 @@ fun LoginScreen(
 fun LoginContent(
     uiState: LoginUiState,
     snackbarHostState: SnackbarHostState,
+    shakeState: SpaceIAShakeState,
     onEvent: (LoginEvent) -> Unit
 ) {
     BoxWithConstraints(
@@ -103,7 +114,8 @@ fun LoginContent(
             Surface(
                 modifier = Modifier
                     .sizeIn(minWidth = logoSize, minHeight = logoSize)
-                    .size(logoSize),
+                    .size(logoSize)
+                    .spaceIAStaggeredEntrance(0),
                 shape = RoundedCornerShape(16.dp),
                 color = Color.White,
                 shadowElevation = 4.dp
@@ -124,7 +136,8 @@ fun LoginContent(
                 text = "SpaceIA",
                 fontSize = 32.sp,
                 fontWeight = FontWeight.Bold,
-                color = Color(0xFF003C8F)
+                color = Color(0xFF003C8F),
+                modifier = Modifier.spaceIAStaggeredEntrance(1)
             )
             
             Text(
@@ -133,7 +146,8 @@ fun LoginContent(
                 letterSpacing = 2.sp,
                 color = Color(0xFF003C8F),
                 fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                modifier = Modifier.spaceIAStaggeredEntrance(2)
             )
             
             Spacer(modifier = Modifier.height((48 * spacingScale).dp))
@@ -141,7 +155,9 @@ fun LoginContent(
             Card(
                 modifier = Modifier
                     .widthIn(max = cardMaxWidth)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .spaceIAShake(shakeState)
+                    .spaceIAStaggeredEntrance(3),
                 shape = RoundedCornerShape(24.dp),
                 colors = CardDefaults.cardColors(containerColor = Color.White),
                 elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
@@ -188,12 +204,13 @@ fun LoginContent(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp)),
+                            .clip(RoundedCornerShape(12.dp))
+                            .animateContentSize(),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF5F7FA),
+                            focusedContainerColor = Color(0xFFE3F2FD).copy(alpha = 0.5f),
                             unfocusedContainerColor = Color(0xFFF5F7FA),
                             disabledContainerColor = Color(0xFFF5F7FA),
-                            focusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color(0xFF003C8F),
                             unfocusedIndicatorColor = Color.Transparent
                         ),
                         keyboardOptions = KeyboardOptions(
@@ -247,12 +264,13 @@ fun LoginContent(
                         },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp)),
+                            .clip(RoundedCornerShape(12.dp))
+                            .animateContentSize(),
                         colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFF5F7FA),
+                            focusedContainerColor = Color(0xFFE3F2FD).copy(alpha = 0.5f),
                             unfocusedContainerColor = Color(0xFFF5F7FA),
                             disabledContainerColor = Color(0xFFF5F7FA),
-                            focusedIndicatorColor = Color.Transparent,
+                            focusedIndicatorColor = Color(0xFF003C8F),
                             unfocusedIndicatorColor = Color.Transparent
                         ),
                         visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
@@ -270,7 +288,8 @@ fun LoginContent(
                         onClick = { onEvent(LoginEvent.SubmitLogin) },
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(56.dp),
+                            .height(56.dp)
+                            .spaceIAPressScale(),
                         shape = RoundedCornerShape(12.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003C8F)),
                         enabled = !uiState.isLoading && uiState.isFormValid

@@ -12,6 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.spaceIAPulse
 import org.utl.idgs901.space_ai_mobile.domain.location.model.CampusLocationState
 
 @Composable
@@ -41,6 +42,7 @@ fun CampusStatusIndicator(state: CampusLocationState, isLoading: Boolean = false
                 modifier = Modifier
                     .size(8.dp)
                     .background(color, RoundedCornerShape(4.dp))
+                    .spaceIAPulse(color)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
