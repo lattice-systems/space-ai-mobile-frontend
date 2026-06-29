@@ -88,12 +88,6 @@ fun CampusMapScreen(
                 if (!navigationSessionUiState.isNavigating) {
                     CenterAlignedTopAppBar(
                         title = { Text("Smart Campus UTL", fontWeight = FontWeight.Bold, color = Color(0xFF0D47A1)) },
-                        actions = { 
-                            CampusStatusIndicator(
-                                state = locationState.campusState,
-                                isLoading = locationState.isLoading
-                            ) 
-                        },
                         colors = TopAppBarDefaults.centerAlignedTopAppBarColors(containerColor = Color.White)
                     )
                     NavigationFloatingPanel(state = navigationRendererUiState)
@@ -111,6 +105,15 @@ fun CampusMapScreen(
                     sessionState = navigationSessionUiState,
                     onBuildingClick = { viewModel.onEvent(CampusMapEvent.BuildingSelected(it)) }
                 )
+
+                // Floating Status Indicator (Aligned to Top-Left)
+                if (!navigationSessionUiState.isNavigating) {
+                    CampusStatusIndicator(
+                        state = locationState.campusState,
+                        isLoading = locationState.isLoading,
+                        modifier = Modifier.align(Alignment.TopStart)
+                    )
+                }
 
                 if (locationState.campusState is CampusLocationState.Outside && !navigationRendererUiState.isRouteVisible && !navigationSessionUiState.isNavigating) {
                     OutsideWarning(Modifier.align(Alignment.TopCenter).padding(16.dp))
