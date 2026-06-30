@@ -9,6 +9,7 @@ import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIATransitio
 import org.utl.idgs901.space_ai_mobile.presentation.auth.LoginScreen
 import org.utl.idgs901.space_ai_mobile.presentation.dashboard.DashboardScreen
 import org.utl.idgs901.space_ai_mobile.presentation.profile.ProfileScreen
+import org.utl.idgs901.space_ai_mobile.presentation.settings.SettingsScreen
 import org.utl.idgs901.space_ai_mobile.presentation.splash.SplashScreen
 
 @Composable
@@ -54,12 +55,23 @@ fun AppNavigation(windowSizeClass: WindowSizeClass) {
                 },
                 onNavigateToProfile = {
                     navController.navigate("profile")
+                },
+                onNavigateToSettings = {
+                    navController.navigate("settings")
                 }
             )
         }
 
         composable("profile") {
             ProfileScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
+        }
+
+        composable("settings") {
+            SettingsScreen(
                 onBackClick = {
                     navController.popBackStack()
                 }

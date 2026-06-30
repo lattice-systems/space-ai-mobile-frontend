@@ -49,7 +49,8 @@ fun DashboardScreen(
     windowSizeClass: WindowSizeClass,
     viewModel: DashboardViewModel = hiltViewModel(),
     onNavigateToLogin: () -> Unit,
-    onNavigateToProfile: () -> Unit
+    onNavigateToProfile: () -> Unit,
+    onNavigateToSettings: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -164,8 +165,11 @@ fun DashboardScreen(
                             label = "Configuración",
                             description = "Ajustes de la app",
                             onClick = { 
-                                nativeHaptics.performHapticFeedback(HapticFeedbackType.TextHandleMove)
-                                scope.launch { drawerState.close() }
+                                haptics.lightClick()
+                                scope.launch { 
+                                    drawerState.close()
+                                    onNavigateToSettings()
+                                }
                             }
                         )
                         
