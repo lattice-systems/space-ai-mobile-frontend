@@ -46,6 +46,9 @@ class IdentityViewModel @Inject constructor(
     }
 
     private fun startTimer(expiresAt: Instant) {
+        val generatedAt = _uiState.value.qrIdentity?.generatedAt ?: Instant.now()
+        val totalDuration = Duration.between(generatedAt, expiresAt).toMillis().toFloat()
+
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
             while (true) {
@@ -53,7 +56,7 @@ class IdentityViewModel @Inject constructor(
                 val remaining = Duration.between(now, expiresAt)
                 
                 if (remaining.isNegative || remaining.isZero) {
-                    _uiState.update { it.copy(remainingTimeText = "00:00") }
+                    _uiState.update { it.copy(remainingTimeText = "00:00", remainingProgress = 0f) }
                     refreshQr() // Auto-refresh when expired
                     break
                 }
@@ -62,8 +65,13 @@ class IdentityViewModel @Inject constructor(
                 val seconds = remaining.seconds % 60
                 val timeText = String.format("%02d:%02d", minutes, seconds)
                 
-                _uiState.update { it.copy(remainingTimeText = timeText) }
-                delay(1000)
+                val progress = remaining.toMillis().toFloat() / totalDuration
+                
+                _uiState.update { it.copy(
+                    remainingTimeText = timeText,
+                    remainingProgress = progress.coerceIn(0f, 1f)
+                ) }
+                delay(500) // Update more frequently for smoother progress
             }
         }
     }
