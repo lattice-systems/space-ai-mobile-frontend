@@ -84,15 +84,22 @@ Para facilitar el desarrollo sin dependencia constante de un backend activo, la 
 
 ## 🎓 Identidad Digital
 * Inicio de sesión seguro con validación en tiempo real.
+* **[NUEVO]** **QR Dinámico Premium:** Contador de expiración animado con estilo Wallet y refresco automático.
 * Almacenamiento cifrado de JWT mediante Keystore.
 * Soporte para UI responsiva (Teléfonos y Tablets).
 
-## 🗺️ Smart Campus & Navegación 3D [NUEVO]
+## 🗺️ Smart Campus & Navegación 3D
 * **Campus 3D:** Visualización interactiva de los edificios de la UTL en 3D.
 * **Geofencing:** Detección automática de entrada/salida del campus.
 * **Navegación Inteligente:** Motor de rutas basado en el algoritmo A* y grafo universitario.
 * **Experiencia Premium:** Renderizado de rutas animadas con estilo moderno (Material 3).
 * Ver más detalles en: [Documentación del Mapa](docs/SMART_CAMPUS_MAP.md).
+
+## 👤 Navegación y Perfil Premium [NUEVO]
+* **Navigation Drawer Premium:** Menú lateral responsivo con efecto blur de fondo, micro-interacciones hápticas y cabecera institucional.
+* **Perfil del Estudiante:** Gestión completa de información personal, académica y de contacto con diseño tipo "Card Stack".
+* **Seguridad Avanzada:** Cambio de contraseña con validaciones en tiempo real y feedback visual de alta fidelidad.
+* **Skeleton Loading:** Shimmer effect profesional para transiciones de carga fluidas.
 
 ---
 

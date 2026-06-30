@@ -8,6 +8,7 @@ import androidx.navigation.compose.rememberNavController
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIATransitions
 import org.utl.idgs901.space_ai_mobile.presentation.auth.LoginScreen
 import org.utl.idgs901.space_ai_mobile.presentation.dashboard.DashboardScreen
+import org.utl.idgs901.space_ai_mobile.presentation.profile.ProfileScreen
 import org.utl.idgs901.space_ai_mobile.presentation.splash.SplashScreen
 
 @Composable
@@ -44,7 +45,25 @@ fun AppNavigation(windowSizeClass: WindowSizeClass) {
         }
         
         composable("dashboard") {
-            DashboardScreen()
+            DashboardScreen(
+                windowSizeClass = windowSizeClass,
+                onNavigateToLogin = {
+                    navController.navigate("login") {
+                        popUpTo("dashboard") { inclusive = true }
+                    }
+                },
+                onNavigateToProfile = {
+                    navController.navigate("profile")
+                }
+            )
+        }
+
+        composable("profile") {
+            ProfileScreen(
+                onBackClick = {
+                    navController.popBackStack()
+                }
+            )
         }
     }
 }

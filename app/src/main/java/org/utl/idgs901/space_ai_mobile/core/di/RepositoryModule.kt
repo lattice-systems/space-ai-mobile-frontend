@@ -5,7 +5,9 @@ import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import org.utl.idgs901.space_ai_mobile.data.repository.MockAuthRepositoryImpl
+import org.utl.idgs901.space_ai_mobile.data.repository.UserRepositoryImpl
 import org.utl.idgs901.space_ai_mobile.domain.repository.AuthRepository
+import org.utl.idgs901.space_ai_mobile.domain.repository.UserRepository
 import javax.inject.Singleton
 
 @Module
@@ -17,4 +19,10 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         mockAuthRepositoryImpl: MockAuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindUserRepository(
+        userRepositoryImpl: UserRepositoryImpl
+    ): UserRepository
 }
