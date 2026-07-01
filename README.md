@@ -101,11 +101,12 @@ Para facilitar el desarrollo sin dependencia constante de un backend activo, la 
 * **Seguridad Avanzada:** Cambio de contraseña con validaciones en tiempo real y feedback visual de alta fidelidad.
 * **Skeleton Loading:** Shimmer effect profesional para transiciones de carga fluidas.
 
-## ⚙️ Configuración y Accesibilidad [NUEVO]
-* **Módulo de Accesibilidad:** Control granular sobre animaciones, contraste, tamaño de texto y soporte avanzado para TalkBack.
-* **Privacidad y Datos:** Gestión transparente de permisos y visualización de consumo de red.
+## ⚙️ Configuración y Accesibilidad
+* **Módulo de Accesibilidad:** Control granular sobre animaciones, contraste, tamaño de texto y soporte avanzado para TalkBack. **[FUNCIONAL]**
+* **Privacidad y Datos:** Gestión transparente de permisos reales y visualización de consumo de red (WiFi/Datos). **[FUNCIONAL]**
 * **Diseño Inclusivo:** Áreas táctiles optimizadas y separación visual mejorada para estudiantes con necesidades especiales.
 * **Persistencia Tipada:** Uso de Proto DataStore para el almacenamiento seguro de preferencias del usuario.
+* **Documentación Legal:** Acceso a política de privacidad, términos y condiciones, y créditos institucionales.
 
 ---
 
