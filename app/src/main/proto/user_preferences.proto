@@ -6,8 +6,7 @@ option java_multiple_files = true;
 message UserPreferencesProto {
   bool reduce_animations = 1;
   bool high_contrast = 2;
-  string font_size = 3;
-  bool screen_reader_enabled = 4;
-  bool haptic_feedback_enabled = 5;
-  bool advanced_accessibility_mode = 6;
+  float font_scale = 3;
+  bool haptics_enabled = 4;
+  bool advanced_accessibility = 5;
 }
