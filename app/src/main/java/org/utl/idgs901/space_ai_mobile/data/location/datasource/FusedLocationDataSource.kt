@@ -16,13 +16,29 @@ class FusedLocationDataSource @Inject constructor(
     @ApplicationContext private val context: Context,
     private val fusedLocationClient: FusedLocationProviderClient
 ) {
-    private val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 5000)
-        .setMinUpdateIntervalMillis(2500)
-        .setMinUpdateDistanceMeters(5f)
+    private val locationRequest = LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 2000)
+        .setMinUpdateIntervalMillis(1000)
+        .setMinUpdateDistanceMeters(0f)
+        .setWaitForAccurateLocation(false)
         .build()
 
     @SuppressLint("MissingPermission")
     fun observeLocation(): Flow<CampusLocation> = callbackFlow {
+        // 1. Send last known location immediately
+        fusedLocationClient.lastLocation.addOnSuccessListener { location ->
+            location?.let {
+                trySend(
+                    CampusLocation(
+                        latitude = it.latitude,
+                        longitude = it.longitude,
+                        accuracy = it.accuracy,
+                        timestamp = it.time
+                    )
+                )
+            }
+        }
+
+        // 2. Setup periodic updates
         val callback = object : LocationCallback() {
             override fun onLocationResult(result: LocationResult) {
                 result.lastLocation?.let { location ->
