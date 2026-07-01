@@ -32,6 +32,7 @@ import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIAMotion
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIADrawerItem
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.rememberSpaceIAHaptics
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.spaceIAPressScale
+import org.utl.idgs901.space_ai_mobile.presentation.chatbot.ChatScreen
 import org.utl.idgs901.space_ai_mobile.presentation.identity.IdentityScreen
 import org.utl.idgs901.space_ai_mobile.presentation.map.CampusMapScreen
 
@@ -297,6 +298,7 @@ fun DashboardScreen(
                     when (targetTab) {
                         DashboardTab.Identity -> Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) { IdentityScreen() }
                         DashboardTab.Map -> CampusMapScreen(onMoreInfoClick = { selectedTab = DashboardTab.AI })
+                        DashboardTab.AI -> Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) { ChatScreen() }
                         else -> {
                             Box(modifier = Modifier.fillMaxSize().padding(innerPadding), contentAlignment = Alignment.Center) {
                                 Text("Próximamente: ${targetTab.label}", color = Color.Gray)
