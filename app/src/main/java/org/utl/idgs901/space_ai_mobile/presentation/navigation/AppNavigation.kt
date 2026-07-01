@@ -10,6 +10,9 @@ import org.utl.idgs901.space_ai_mobile.presentation.auth.LoginScreen
 import org.utl.idgs901.space_ai_mobile.presentation.dashboard.DashboardScreen
 import org.utl.idgs901.space_ai_mobile.presentation.profile.ProfileScreen
 import org.utl.idgs901.space_ai_mobile.presentation.settings.SettingsScreen
+import org.utl.idgs901.space_ai_mobile.presentation.settings.detail.CreditsScreen
+import org.utl.idgs901.space_ai_mobile.presentation.settings.detail.PrivacyPolicyScreen
+import org.utl.idgs901.space_ai_mobile.presentation.settings.detail.TermsAndConditionsScreen
 import org.utl.idgs901.space_ai_mobile.presentation.splash.SplashScreen
 
 @Composable
@@ -74,8 +77,29 @@ fun AppNavigation(windowSizeClass: WindowSizeClass) {
             SettingsScreen(
                 onBackClick = {
                     navController.popBackStack()
+                },
+                onNavigateToPrivacy = {
+                    navController.navigate("settings_privacy")
+                },
+                onNavigateToTerms = {
+                    navController.navigate("settings_terms")
+                },
+                onNavigateToCredits = {
+                    navController.navigate("settings_credits")
                 }
             )
+        }
+
+        composable("settings_privacy") {
+            PrivacyPolicyScreen(onBackClick = { navController.popBackStack() })
+        }
+
+        composable("settings_terms") {
+            TermsAndConditionsScreen(onBackClick = { navController.popBackStack() })
+        }
+
+        composable("settings_credits") {
+            CreditsScreen(onBackClick = { navController.popBackStack() })
         }
     }
 }
