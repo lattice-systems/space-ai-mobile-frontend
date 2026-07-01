@@ -1,0 +1,29 @@
+# Task: Implement Sprint 5 - Turn-by-Turn Navigation
+
+- [/] Research and Planning
+	- [x] Analyze existing navigation components
+	- [x] Design instruction generation logic
+	- [x] Plan smart camera behavior
+	- [x] Create implementation plan
+- [ ] Domain Layer Implementation
+	- [ ] Create `NavigationInstruction` and `ActiveNavigation` models
+	- [ ] Define `InstructionType` enum
+	- [ ] Implement `StartNavigationUseCase`, `StopNavigationUseCase`, `UpdateNavigationUseCase`
+- [ ] Data Layer Implementation
+	- [ ] Implement `InstructionGenerator` (Turn detection math)
+	- [ ] Implement `CurrentRouteTracker` (Segment matching)
+	- [ ] Implement `DistanceToPolylineCalculator` (Deviation detection)
+	- [ ] Implement `RouteRecalculator` logic
+	- [ ] Create `CampusNavigationEngine` orchestrator
+- [ ] Presentation Layer Implementation
+	- [ ] Create `NavigationSessionViewModel` and `NavigationSessionUiState`
+	- [ ] Build `NavigationInstructionCard` component
+	- [ ] Build `NavigationDashboard` and `NavigationFloatingPanel`
+- [ ] UI & Map Integration
+	- [ ] Implement `NavigationCameraController` (Follow, Pitch, Bearing)
+	- [ ] Integrate session control into `CampusMapScreen`
+	- [ ] Add vibration and arrival feedback
+- [ ] Verification and Testing
+	- [ ] Unit tests for instruction generation and deviation logic
+	- [ ] Manual verification with simulated walking GPS
+	- [ ] Accessibility and Responsiveness validation
