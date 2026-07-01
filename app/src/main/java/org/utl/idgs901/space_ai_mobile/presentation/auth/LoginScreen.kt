@@ -1,38 +1,49 @@
 package org.utl.idgs901.space_ai_mobile.presentation.auth
 
-import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.relocation.BringIntoViewRequester
+import androidx.compose.foundation.relocation.bringIntoViewRequester
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.focus.onFocusEvent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
+import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
-import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import org.utl.idgs901.space_ai_mobile.core.designsystem.components.*
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.*
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginScreen(
     windowSizeClass: WindowSizeClass,
@@ -41,18 +52,21 @@ fun LoginScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val snackbarHostState = remember { SnackbarHostState() }
-    val haptics = rememberSpaceIAHaptics()
+    val haptic = LocalHapticFeedback.current
     val shakeState = rememberSpaceIAShakeState()
+    var showSuccess by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.effect.collect { effect ->
             when (effect) {
                 is LoginEffect.NavigateToDashboard -> {
-                    haptics.success()
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress) // Use LongPress as proxy for Confirm if not available
+                    showSuccess = true
+                    delay(1500)
                     onNavigateToDashboard()
                 }
                 is LoginEffect.ShowSnackbar -> {
-                    haptics.error()
+                    haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                     shakeState.shake()
                     snackbarHostState.showSnackbar(effect.message)
                 }
@@ -60,14 +74,21 @@ fun LoginScreen(
         }
     }
 
-    LoginContent(
-        uiState = uiState,
-        snackbarHostState = snackbarHostState,
-        shakeState = shakeState,
-        onEvent = viewModel::onEvent
-    )
+    SpaceIAPremiumBackground {
+        LoginContent(
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
+            shakeState = shakeState,
+            onEvent = viewModel::onEvent
+        )
+
+        if (showSuccess) {
+            SuccessOverlay()
+        }
+    }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LoginContent(
     uiState: LoginUiState,
@@ -75,294 +96,267 @@ fun LoginContent(
     shakeState: SpaceIAShakeState,
     onEvent: (LoginEvent) -> Unit
 ) {
-    BoxWithConstraints(
+    val scrollState = rememberScrollState()
+
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFE3F2FD),
-                        Color(0xFFBBDEFB)
-                    )
-                )
-            )
-            .windowInsetsPadding(WindowInsets.safeDrawing)
     ) {
-        val screenWidth = this.maxWidth
-        val screenHeight = this.maxHeight
-        
-        val horizontalPadding = when {
-            screenWidth < 360.dp -> 16.dp
-            screenWidth < 600.dp -> 24.dp
-            else -> 32.dp
-        }
-        
-        val cardMaxWidth = 600.dp
-        val logoSize = if (screenHeight < 600.dp) 48.dp else 64.dp
-        val spacingScale = if (screenHeight < 700.dp) 0.7f else 1.0f
-
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .imePadding()
-                .padding(horizontal = horizontalPadding, vertical = 24.dp),
+                .verticalScroll(scrollState)
+                .padding(horizontal = 24.dp)
+                .imePadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Spacer(modifier = Modifier.height((40 * spacingScale).dp))
+            // HERO SECTION (30-40%)
+            Spacer(modifier = Modifier.height(64.dp))
+            HeroSection()
             
-            Surface(
-                modifier = Modifier
-                    .sizeIn(minWidth = logoSize, minHeight = logoSize)
-                    .size(logoSize)
-                    .spaceIAStaggeredEntrance(0),
-                shape = RoundedCornerShape(16.dp),
-                color = Color.White,
-                shadowElevation = 4.dp
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Face,
-                        contentDescription = "Logotipo",
-                        tint = Color(0xFF003C8F),
-                        modifier = Modifier.size((logoSize.value * 0.5f).dp)
-                    )
-                }
-            }
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Text(
-                text = "SpaceIA",
-                fontSize = 32.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFF003C8F),
-                modifier = Modifier.spaceIAStaggeredEntrance(1)
-            )
-            
-            Text(
-                text = "SISTEMA OPERATIVO DIGITAL",
-                fontSize = 12.sp,
-                letterSpacing = 2.sp,
-                color = Color(0xFF003C8F),
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.spaceIAStaggeredEntrance(2)
-            )
-            
-            Spacer(modifier = Modifier.height((48 * spacingScale).dp))
-            
+            Spacer(modifier = Modifier.height(48.dp))
+
+            // LOGIN FORM
             Card(
                 modifier = Modifier
-                    .widthIn(max = cardMaxWidth)
                     .fillMaxWidth()
+                    .widthIn(max = 500.dp)
                     .spaceIAShake(shakeState)
-                    .spaceIAStaggeredEntrance(3),
-                shape = RoundedCornerShape(24.dp),
-                colors = CardDefaults.cardColors(containerColor = Color.White),
-                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+                    .spaceIAStaggeredEntrance(2)
+                    .shadow(16.dp, RoundedCornerShape(32.dp)),
+                shape = RoundedCornerShape(32.dp),
+                colors = CardDefaults.cardColors(containerColor = Color.White.copy(alpha = 0.92f))
             ) {
                 Column(
                     modifier = Modifier
-                        .padding(horizontalPadding)
-                        .padding(vertical = (32 * spacingScale).dp)
+                        .padding(32.dp)
                         .fillMaxWidth()
                 ) {
                     Text(
-                        text = "Bienvenido a SpaceIA",
-                        fontSize = 24.sp,
+                        text = "Acceso Seguro",
+                        fontSize = 22.sp,
                         fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.fillMaxWidth()
+                        color = Color(0xFF1E293B)
                     )
-                    
                     Text(
-                        text = "Inicia sesión para gestionar tu experiencia en el campus.",
+                        text = "Usa tus credenciales universitarias.",
                         fontSize = 14.sp,
                         color = Color.Gray,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp)
+                        modifier = Modifier.padding(top = 4.dp)
                     )
-                    
-                    Spacer(modifier = Modifier.height((32 * spacingScale).dp))
-                    
-                    Text(
-                        text = "Correo Electrónico",
-                        fontSize = 14.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = Color.DarkGray
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    TextField(
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    SpaceIAPremiumTextField(
                         value = uiState.email,
                         onValueChange = { onEvent(LoginEvent.EmailChanged(it)) },
-                        placeholder = { Text("ej. jdoe@universidad.edu", color = Color.LightGray) },
-                        leadingIcon = { 
-                            Icon(Icons.Default.Email, contentDescription = null, tint = Color.Gray) 
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .animateContentSize(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFE3F2FD).copy(alpha = 0.5f),
-                            unfocusedContainerColor = Color(0xFFF5F7FA),
-                            disabledContainerColor = Color(0xFFF5F7FA),
-                            focusedIndicatorColor = Color(0xFF003C8F),
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
+                        label = "Correo Electrónico",
+                        placeholder = "ej. alex@utl.edu.mx",
+                        leadingIcon = Icons.Default.Email,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Email,
                             imeAction = ImeAction.Next
                         ),
                         isError = uiState.emailError != null,
-                        singleLine = true
+                        errorMessage = uiState.emailError
                     )
-                    
-                    Spacer(modifier = Modifier.height((24 * spacingScale).dp))
-                    
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = "Contraseña",
-                            fontSize = 14.sp,
-                            fontWeight = FontWeight.Medium,
-                            color = Color.DarkGray
-                        )
-                        TextButton(
-                            onClick = { /* TODO */ },
-                            contentPadding = PaddingValues(0.dp)
-                        ) {
-                            Text(
-                                text = "¿Olvidaste tu contraseña?",
-                                fontSize = 12.sp,
-                                fontWeight = FontWeight.SemiBold,
-                                color = Color(0xFF003C8F)
-                            )
-                        }
-                    }
-                    TextField(
+
+                    Spacer(modifier = Modifier.height(20.dp))
+
+                    SpaceIAPremiumTextField(
                         value = uiState.password,
                         onValueChange = { onEvent(LoginEvent.PasswordChanged(it)) },
-                        placeholder = { Text("........", color = Color.LightGray) },
-                        leadingIcon = { 
-                            Icon(Icons.Default.Lock, contentDescription = null, tint = Color.Gray) 
-                        },
-                        trailingIcon = {
-                            IconButton(onClick = { onEvent(LoginEvent.TogglePasswordVisibility) }) {
-                                Icon(
-                                    imageVector = if (uiState.isPasswordVisible) Icons.Default.VisibilityOff else Icons.Default.Visibility,
-                                    contentDescription = null,
-                                    tint = Color.Gray
-                                )
-                            }
-                        },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clip(RoundedCornerShape(12.dp))
-                            .animateContentSize(),
-                        colors = TextFieldDefaults.colors(
-                            focusedContainerColor = Color(0xFFE3F2FD).copy(alpha = 0.5f),
-                            unfocusedContainerColor = Color(0xFFF5F7FA),
-                            disabledContainerColor = Color(0xFFF5F7FA),
-                            focusedIndicatorColor = Color(0xFF003C8F),
-                            unfocusedIndicatorColor = Color.Transparent
-                        ),
-                        visualTransformation = if (uiState.isPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                        label = "Contraseña",
+                        placeholder = "••••••••",
+                        leadingIcon = Icons.Default.Lock,
+                        isPassword = true,
+                        isPasswordVisible = uiState.isPasswordVisible,
+                        onTogglePassword = { onEvent(LoginEvent.TogglePasswordVisibility) },
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Password,
                             imeAction = ImeAction.Done
                         ),
                         isError = uiState.passwordError != null,
-                        singleLine = true
+                        errorMessage = uiState.passwordError
                     )
-                    
-                    Spacer(modifier = Modifier.height((32 * spacingScale).dp))
-                    
-                    Button(
+
+                    Spacer(modifier = Modifier.height(32.dp))
+
+                    SpaceIAPremiumButton(
+                        text = "Iniciar Sesión",
                         onClick = { onEvent(LoginEvent.SubmitLogin) },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp)
-                            .spaceIAPressScale(),
-                        shape = RoundedCornerShape(12.dp),
-                        colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF003C8F)),
-                        enabled = !uiState.isLoading && uiState.isFormValid
+                        isLoading = uiState.isLoading,
+                        enabled = uiState.isFormValid
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        if (uiState.isLoading) {
-                            CircularProgressIndicator(color = Color.White, modifier = Modifier.size(24.dp))
-                        } else {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text("Iniciar Sesión", fontSize = 16.sp, fontWeight = FontWeight.Bold)
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = null)
-                            }
-                        }
-                    }
-                    
-                    Spacer(modifier = Modifier.height(16.dp))
-                    
-                    OutlinedButton(
-                        onClick = { /* TODO */ },
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(56.dp),
-                        shape = RoundedCornerShape(12.dp),
-                        border = ButtonDefaults.outlinedButtonBorder.copy(width = 1.dp)
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Face, 
-                            contentDescription = null, 
-                            tint = Color(0xFF003C8F),
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Spacer(modifier = Modifier.width(8.dp))
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
                         Text(
-                            text = "Usar Login Biométrico", 
-                            color = Color(0xFF424242), 
-                            fontWeight = FontWeight.Medium,
+                            text = "o",
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            color = Color.Gray,
                             fontSize = 14.sp
                         )
+                        HorizontalDivider(modifier = Modifier.weight(1f), color = Color.LightGray.copy(alpha = 0.5f))
                     }
-                }
-            }
-            
-            Spacer(modifier = Modifier.weight(1f))
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Row {
-                    Text(text = "¿No tienes una cuenta? ", color = Color.Gray, fontSize = 14.sp)
-                    Text(
-                        text = "Contactar a Registro", 
-                        color = Color(0xFF003C8F), 
-                        fontSize = 14.sp, 
-                        fontWeight = FontWeight.Bold
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    MicrosoftSignInButton(
+                        onClick = { /* TODO */ },
+                        modifier = Modifier.spaceIAStaggeredEntrance(3)
                     )
                 }
-                
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(text = "Política de Privacidad", color = Color.Gray, fontSize = 12.sp)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Box(modifier = Modifier.size(4.dp).background(Color.LightGray, RoundedCornerShape(2.dp)))
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(text = "Términos de Servicio", color = Color.Gray, fontSize = 12.sp)
-                }
             }
+
+            Spacer(modifier = Modifier.height(32.dp))
             
-            Spacer(modifier = Modifier.height(16.dp))
+            // FOOTER SECTION
+            FooterSection()
+            Spacer(modifier = Modifier.height(32.dp))
         }
-        
+
         SnackbarHost(
             hostState = snackbarHostState,
             modifier = Modifier.align(Alignment.BottomCenter)
         )
+    }
+}
+
+@Composable
+private fun HeroSection() {
+    val infiniteTransition = rememberInfiniteTransition(label = "LogoFloat")
+    val floatAnim by infiniteTransition.animateFloat(
+        initialValue = -6f,
+        targetValue = 6f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(4000, easing = EaseInOutSine),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "Floating"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.spaceIAStaggeredEntrance(0)
+    ) {
+        Surface(
+            modifier = Modifier
+                .size(84.dp)
+                .graphicsLayer { translationY = floatAnim }
+                .shadow(12.dp, RoundedCornerShape(24.dp)),
+            shape = RoundedCornerShape(24.dp),
+            color = Color.White
+        ) {
+            Box(contentAlignment = Alignment.Center) {
+                Icon(
+                    Icons.Default.Face, 
+                    contentDescription = null, 
+                    tint = Color(0xFF0D47A1),
+                    modifier = Modifier.size(48.dp)
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(24.dp))
+        
+        Text(
+            text = "Bienvenido a",
+            fontSize = 18.sp,
+            color = Color(0xFF0D47A1),
+            fontWeight = FontWeight.Medium,
+            letterSpacing = 1.sp
+        )
+        
+        Text(
+            text = "SpaceIA",
+            fontSize = 48.sp,
+            fontWeight = FontWeight.ExtraBold,
+            color = Color(0xFF0D47A1),
+            letterSpacing = (-1.5).sp
+        )
+        
+        Text(
+            text = "Tu acceso inteligente al campus",
+            fontSize = 16.sp,
+            color = Color(0xFF0D47A1).copy(alpha = 0.7f),
+            textAlign = TextAlign.Center,
+            modifier = Modifier.padding(top = 4.dp)
+        )
+    }
+}
+
+@Composable
+private fun FooterSection() {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.spaceIAStaggeredEntrance(4)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("¿Problemas al entrar? ", color = Color.Gray, fontSize = 14.sp)
+            Text(
+                "Soporte IT", 
+                color = Color(0xFF0D47A1), 
+                fontSize = 14.sp, 
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
+        Text(
+            text = "v1.2.5 • Universidad Tecnológica",
+            fontSize = 11.sp,
+            color = Color.LightGray,
+            letterSpacing = 0.5.sp
+        )
+    }
+}
+
+@Composable
+private fun SuccessOverlay() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White.copy(alpha = 0.95f))
+            .clickable(enabled = false) {},
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Surface(
+                modifier = Modifier
+                    .size(120.dp)
+                    .spaceIAStaggeredEntrance(0),
+                shape = RoundedCornerShape(60.dp),
+                color = Color(0xFF4CAF50).copy(alpha = 0.1f)
+            ) {
+                Box(contentAlignment = Alignment.Center) {
+                    Icon(
+                        imageVector = Icons.Default.CheckCircle,
+                        contentDescription = null,
+                        tint = Color(0xFF4CAF50),
+                        modifier = Modifier.size(72.dp)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(32.dp))
+            Text(
+                "¡Acceso Concedido!",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color(0xFF1B5E20)
+            )
+            Text(
+                "Iniciando sesión en SpaceIA...",
+                fontSize = 16.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 8.dp)
+            )
+        }
     }
 }

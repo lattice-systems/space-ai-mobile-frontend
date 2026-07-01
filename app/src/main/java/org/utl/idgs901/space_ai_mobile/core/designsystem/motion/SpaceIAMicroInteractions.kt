@@ -19,6 +19,9 @@ import kotlin.math.roundToInt
  * Scale effect on press, returns to 1.0f on release with a spring animation.
  */
 fun Modifier.spaceIAPressScale() = composed {
+    val settings = LocalSettingsPreferences.current
+    if (settings.reduceAnimations) return@composed this
+
     val scale = remember { Animatable(1f) }
     val scope = rememberCoroutineScope()
 
@@ -80,12 +83,16 @@ fun Modifier.spaceIAShake(state: SpaceIAShakeState) = this.offset {
  * Shimmer effect for loading states.
  */
 fun Modifier.spaceIAShimmer() = composed {
+    val settings = LocalSettingsPreferences.current
+    if (settings.reduceAnimations) return@composed this.background(androidx.compose.ui.graphics.Color.LightGray.copy(alpha = 0.3f))
+
     val transition = rememberInfiniteTransition(label = "Shimmer")
+    
     val translateAnim by transition.animateFloat(
         initialValue = 0f,
         targetValue = 1000f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1200, easing = LinearEasing),
+            animation = tween(if (settings.reduceAnimations) 2400 else 1200, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "Translate"
@@ -113,6 +120,9 @@ fun Modifier.spaceIAStaggeredEntrance(
     index: Int,
     delayStep: Int = 80
 ) = composed {
+    val settings = LocalSettingsPreferences.current
+    if (settings.reduceAnimations) return@composed this
+
     val animatedProgress = remember { Animatable(0f) }
     
     LaunchedEffect(Unit) {
@@ -141,7 +151,8 @@ fun Modifier.spaceIAPulse(
     color: androidx.compose.ui.graphics.Color,
     enabled: Boolean = true
 ) = composed {
-    if (!enabled) return@composed this
+    val settings = LocalSettingsPreferences.current
+    if (!enabled || settings.reduceAnimations) return@composed this
 
     val infiniteTransition = rememberInfiniteTransition(label = "Pulse")
     val scale by infiniteTransition.animateFloat(

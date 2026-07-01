@@ -1,23 +1,21 @@
 package org.utl.idgs901.space_ai_mobile.presentation.splash
 
 import androidx.compose.animation.core.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
@@ -26,6 +24,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import kotlinx.coroutines.delay
+import org.utl.idgs901.space_ai_mobile.core.designsystem.components.SpaceIAPremiumBackground
 import org.utl.idgs901.space_ai_mobile.core.designsystem.motion.SpaceIAMotion
 
 @Composable
@@ -34,98 +34,110 @@ fun SplashScreen(
     onNavigateToLogin: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    
+    // Animation States
+    var phase1Active by remember { mutableStateOf(false) } // Background/Lighting
+    var phase2Active by remember { mutableStateOf(false) } // Logo
+    var phase3Active by remember { mutableStateOf(false) } // SpaceIA Title
+    var phase4Active by remember { mutableStateOf(false) } // Subtitle
+    var phase5Active by remember { mutableStateOf(false) } // Transition Exit
 
-    LaunchedEffect(uiState.shouldNavigateToLogin) {
-        if (uiState.shouldNavigateToLogin) {
-            onNavigateToLogin()
-        }
+    LaunchedEffect(Unit) {
+        // Phase 1: Background (200ms)
+        phase1Active = true
+        delay(200)
+        
+        // Phase 2: Logo (500ms)
+        phase2Active = true
+        delay(500)
+        
+        // Phase 3: Title (300ms)
+        phase3Active = true
+        delay(300)
+        
+        // Phase 4: Subtitle (200ms)
+        phase4Active = true
+        delay(200)
+        
+        // Total so far: 1200ms. Wait for the rest to hit 1500ms
+        delay(300)
+        
+        // Phase 5: Transition Exit
+        phase5Active = true
+        onNavigateToLogin()
     }
 
-    var startExitAnim by remember { mutableStateOf(false) }
     val exitAlpha by animateFloatAsState(
-        targetValue = if (startExitAnim) 0f else 1f,
-        animationSpec = tween(SpaceIAMotion.Duration.Normal),
+        targetValue = if (phase5Active) 0f else 1f,
+        animationSpec = tween(300),
         label = "ExitAlpha"
     )
 
-    LaunchedEffect(uiState.shouldNavigateToLogin) {
-        if (uiState.shouldNavigateToLogin) {
-            startExitAnim = true
-        }
-    }
+    val exitScale by animateFloatAsState(
+        targetValue = if (phase5Active) 1.1f else 1f,
+        animationSpec = tween(300),
+        label = "ExitScale"
+    )
 
-    BoxWithConstraints(
+    Box(
         modifier = Modifier
             .fillMaxSize()
-            .alpha(exitAlpha)
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(
-                        Color(0xFFE3F2FD),
-                        Color(0xFFBBDEFB),
-                        Color(0xFF90CAF9)
-                    )
-                )
-            )
-            .windowInsetsPadding(WindowInsets.safeDrawing)
+            .graphicsLayer {
+                alpha = exitAlpha
+                scaleX = exitScale
+                scaleY = exitScale
+            }
     ) {
-        val screenWidth = this.maxWidth
-        val isSmallScreen = screenWidth < 360.dp
-
-        // Premium Background Particles
-        BackgroundParticles()
-
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            AnimatedLogoSection(isSmallScreen)
-            
-            Spacer(modifier = Modifier.height(32.dp))
-            
-            AnimatedTextSection()
-        }
-
-        // Premium Loading Section
-        Box(
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 64.dp)
-                .width(screenWidth * 0.5f)
-        ) {
-            LinearProgressIndicator(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(4.dp)
-                    .graphicsLayer(alpha = 0.6f),
-                color = Color(0xFF0D47A1),
-                trackColor = Color(0xFF0D47A1).copy(alpha = 0.1f)
-            )
+        SpaceIAPremiumBackground {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                PremiumLogoSection(visible = phase2Active)
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                PremiumTextSection(
+                    titleVisible = phase3Active,
+                    subtitleVisible = phase4Active
+                )
+            }
         }
     }
 }
 
 @Composable
-private fun AnimatedLogoSection(isSmallScreen: Boolean) {
+private fun PremiumLogoSection(visible: Boolean) {
     val infiniteTransition = rememberInfiniteTransition(label = "LogoFloating")
-    
     val floatAnim by infiniteTransition.animateFloat(
-        initialValue = -10f,
-        targetValue = 10f,
+        initialValue = -8f,
+        targetValue = 8f,
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = SpaceIAMotion.Easing.Smooth),
+            animation = tween(4000, easing = SpaceIAMotion.Easing.Smooth),
             repeatMode = RepeatMode.Reverse
         ),
         label = "Floating"
     )
 
-    val scaleAnim = remember { Animatable(0.5f) }
-    val alphaAnim = remember { Animatable(0f) }
+    val logoAlpha by animateFloatAsState(
+        targetValue = if (visible) 1f else 0f,
+        animationSpec = tween(500),
+        label = "LogoAlpha"
+    )
+    
+    val logoScale by animateFloatAsState(
+        targetValue = if (visible) 1f else 0.5f,
+        animationSpec = spring(
+            dampingRatio = Spring.DampingRatioMediumBouncy,
+            stiffness = Spring.StiffnessLow
+        ),
+        label = "LogoScale"
+    )
 
     val glowAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.3f,
-        targetValue = 0.7f,
+        initialValue = 0.2f,
+        targetValue = 0.6f,
         animationSpec = infiniteRepeatable(
             animation = tween(1500, easing = SpaceIAMotion.Easing.Smooth),
             repeatMode = RepeatMode.Reverse
@@ -133,26 +145,23 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
         label = "Glow"
     )
 
-    LaunchedEffect(Unit) {
-        scaleAnim.animateTo(
-            targetValue = 1f,
-            animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessLow
-            )
-        )
-        alphaAnim.animateTo(1f, tween(1000))
-    }
-
-    Box(contentAlignment = Alignment.Center) {
-        // Institutional Glow
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.graphicsLayer {
+            alpha = logoAlpha
+            scaleX = logoScale
+            scaleY = logoScale
+            translationY = floatAnim
+        }
+    ) {
+        // Glow Effect
         Surface(
             modifier = Modifier
-                .size(if (isSmallScreen) 120.dp else 150.dp)
+                .size(140.dp)
                 .graphicsLayer {
-                    scaleX = scaleAnim.value * 1.2f
-                    scaleY = scaleAnim.value * 1.2f
-                    alpha = alphaAnim.value * glowAlpha
+                    alpha = glowAlpha * logoAlpha
+                    scaleX = 1.2f
+                    scaleY = 1.2f
                 },
             shape = RoundedCornerShape(40.dp),
             color = Color(0xFF0D47A1).copy(alpha = 0.2f)
@@ -160,13 +169,7 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
 
         Surface(
             modifier = Modifier
-                .size(if (isSmallScreen) 100.dp else 128.dp)
-                .graphicsLayer {
-                    translationY = floatAnim
-                    scaleX = scaleAnim.value
-                    scaleY = scaleAnim.value
-                    alpha = alphaAnim.value
-                }
+                .size(120.dp)
                 .clip(RoundedCornerShape(32.dp)),
             shape = RoundedCornerShape(32.dp),
             color = Color.White,
@@ -175,9 +178,9 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
             Box(contentAlignment = Alignment.Center) {
                 Icon(
                     imageVector = Icons.Default.Face,
-                    contentDescription = "Logotipo de SpaceIA",
+                    contentDescription = null,
                     tint = Color(0xFF0D47A1),
-                    modifier = Modifier.size(if (isSmallScreen) 50.dp else 64.dp)
+                    modifier = Modifier.size(60.dp)
                 )
             }
         }
@@ -185,90 +188,56 @@ private fun AnimatedLogoSection(isSmallScreen: Boolean) {
 }
 
 @Composable
-private fun AnimatedTextSection() {
-    var startTextAnim by remember { mutableStateOf(false) }
+private fun PremiumTextSection(
+    titleVisible: Boolean,
+    subtitleVisible: Boolean
+) {
+    val titleAlpha by animateFloatAsState(
+        targetValue = if (titleVisible) 1f else 0f,
+        animationSpec = tween(300),
+        label = "TitleAlpha"
+    )
     
-    val alphaText by animateFloatAsState(
-        targetValue = if (startTextAnim) 1f else 0f,
-        animationSpec = tween(1500, delayMillis = 300),
-        label = "AlphaText"
+    val titleBlur by animateFloatAsState(
+        targetValue = if (titleVisible) 0f else 10f,
+        animationSpec = tween(300),
+        label = "TitleBlur"
     )
 
-    val slideText by animateDpAsState(
-        targetValue = if (startTextAnim) 0.dp else 20.dp,
-        animationSpec = tween(1000, delayMillis = 300, easing = EaseOutCubic),
-        label = "SlideText"
+    val subtitleAlpha by animateFloatAsState(
+        targetValue = if (subtitleVisible) 1f else 0f,
+        animationSpec = tween(200),
+        label = "SubtitleAlpha"
+    )
+    
+    val subtitleSlide by animateDpAsState(
+        targetValue = if (subtitleVisible) 0.dp else 20.dp,
+        animationSpec = tween(200, easing = EaseOutCubic),
+        label = "SubtitleSlide"
     )
 
-    LaunchedEffect(Unit) {
-        startTextAnim = true
-    }
-
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier
-            .offset(y = slideText)
-            .alpha(alphaText)
-    ) {
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
             text = "SpaceIA",
-            fontSize = 42.sp,
+            fontSize = 48.sp,
             fontWeight = FontWeight.ExtraBold,
             color = Color(0xFF0D47A1),
-            letterSpacing = (-1).sp,
-            modifier = Modifier.graphicsLayer {
-                alpha = alphaText
-                scaleX = 0.9f + (0.1f * alphaText)
-                scaleY = 0.9f + (0.1f * alphaText)
-            }
+            letterSpacing = (-1.5).sp,
+            modifier = Modifier
+                .alpha(titleAlpha)
+                .blur(titleBlur.dp)
         )
         
         Text(
-            text = "Transformando la experiencia del campus",
-            fontSize = 14.sp,
+            text = "Tu acceso inteligente al campus",
+            fontSize = 16.sp,
             fontWeight = FontWeight.Medium,
             color = Color(0xFF0D47A1).copy(alpha = 0.7f),
             textAlign = TextAlign.Center,
-            letterSpacing = 0.5.sp,
-            modifier = Modifier.padding(top = 8.dp, start = 32.dp, end = 32.dp)
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .alpha(subtitleAlpha)
+                .offset(y = subtitleSlide)
         )
-    }
-}
-
-@Composable
-private fun BackgroundParticles() {
-    val infiniteTransition = rememberInfiniteTransition(label = "Particles")
-    
-    val movement by infiniteTransition.animateFloat(
-        initialValue = 0f,
-        targetValue = 1f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(10000, easing = LinearEasing),
-            repeatMode = RepeatMode.Restart
-        ),
-        label = "Movement"
-    )
-
-    Canvas(modifier = Modifier.fillMaxSize()) {
-        val particles = listOf(
-            Offset(size.width * 0.2f, size.height * 0.3f),
-            Offset(size.width * 0.8f, size.height * 0.2f),
-            Offset(size.width * 0.5f, size.height * 0.8f),
-            Offset(size.width * 0.1f, size.height * 0.7f),
-            Offset(size.width * 0.9f, size.height * 0.6f)
-        )
-
-        particles.forEachIndexed { index, offset ->
-            val animatedOffset = Offset(
-                x = offset.x + (index * 20 * movement),
-                y = offset.y - (index * 30 * movement)
-            )
-            
-            drawCircle(
-                color = Color.White.copy(alpha = 0.2f),
-                radius = (10 + (index * 5)).toFloat(),
-                center = animatedOffset
-            )
-        }
     }
 }

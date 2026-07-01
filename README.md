@@ -84,15 +84,29 @@ Para facilitar el desarrollo sin dependencia constante de un backend activo, la 
 
 ## 🎓 Identidad Digital
 * Inicio de sesión seguro con validación en tiempo real.
+* **[NUEVO]** **QR Dinámico Premium:** Contador de expiración animado con estilo Wallet y refresco automático.
 * Almacenamiento cifrado de JWT mediante Keystore.
 * Soporte para UI responsiva (Teléfonos y Tablets).
 
-## 🗺️ Smart Campus & Navegación 3D [NUEVO]
+## 🗺️ Smart Campus & Navegación 3D
 * **Campus 3D:** Visualización interactiva de los edificios de la UTL en 3D.
 * **Geofencing:** Detección automática de entrada/salida del campus.
 * **Navegación Inteligente:** Motor de rutas basado en el algoritmo A* y grafo universitario.
 * **Experiencia Premium:** Renderizado de rutas animadas con estilo moderno (Material 3).
 * Ver más detalles en: [Documentación del Mapa](docs/SMART_CAMPUS_MAP.md).
+
+## 👤 Navegación y Perfil Premium
+* **Navigation Drawer Premium:** Menú lateral responsivo con efecto blur de fondo, micro-interacciones hápticas y cabecera institucional.
+* **Perfil del Estudiante:** Gestión completa de información personal, académica y de contacto con diseño tipo "Card Stack".
+* **Seguridad Avanzada:** Cambio de contraseña con validaciones en tiempo real y feedback visual de alta fidelidad.
+* **Skeleton Loading:** Shimmer effect profesional para transiciones de carga fluidas.
+
+## ⚙️ Configuración y Accesibilidad
+* **Módulo de Accesibilidad:** Control granular sobre animaciones, contraste, tamaño de texto y soporte avanzado para TalkBack. **[FUNCIONAL]**
+* **Privacidad y Datos:** Gestión transparente de permisos reales y visualización de consumo de red (WiFi/Datos). **[FUNCIONAL]**
+* **Diseño Inclusivo:** Áreas táctiles optimizadas y separación visual mejorada para estudiantes con necesidades especiales.
+* **Persistencia Tipada:** Uso de Proto DataStore para el almacenamiento seguro de preferencias del usuario.
+* **Documentación Legal:** Acceso a política de privacidad, términos y condiciones, y créditos institucionales.
 
 ---
 

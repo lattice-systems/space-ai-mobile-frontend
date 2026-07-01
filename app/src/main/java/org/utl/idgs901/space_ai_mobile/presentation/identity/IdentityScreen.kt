@@ -1,6 +1,9 @@
 package org.utl.idgs901.space_ai_mobile.presentation.identity
 
 import android.graphics.Bitmap
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -164,30 +167,10 @@ fun IdentityScreen(
 
                                 Spacer(modifier = Modifier.height(24.dp))
 
-                                Surface(
-                                    shape = RoundedCornerShape(16.dp),
-                                    color = Color.White.copy(alpha = 0.2f),
-                                    modifier = Modifier.spaceIAPulse(Color.White)
-                                ) {
-                                    Row(
-                                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
-                                        verticalAlignment = Alignment.CenterVertically
-                                    ) {
-                                        Icon(
-                                            Icons.Default.Timer,
-                                            contentDescription = null,
-                                            tint = Color.White,
-                                            modifier = Modifier.size(14.dp)
-                                        )
-                                        Spacer(modifier = Modifier.width(6.dp))
-                                        Text(
-                                            text = uiState.remainingTimeText,
-                                            color = Color.White,
-                                            fontSize = 14.sp,
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
-                                }
+                                PremiumTimer(
+                                    remainingTimeText = uiState.remainingTimeText,
+                                    progress = uiState.remainingProgress
+                                )
 
                                 Text(
                                     text = "El código se actualiza automáticamente",
@@ -200,28 +183,64 @@ fun IdentityScreen(
                     }
                 }
             }
+            
+            Spacer(modifier = Modifier.height(32.dp))
+        }
+    }
+}
 
-            Spacer(modifier = Modifier.height(24.dp))
+@Composable
+fun PremiumTimer(
+    remainingTimeText: String,
+    progress: Float
+) {
+    val animatedProgress by animateFloatAsState(
+        targetValue = progress,
+        animationSpec = tween(durationMillis = 500, easing = LinearEasing),
+        label = "TimerProgress"
+    )
 
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+    Surface(
+        shape = RoundedCornerShape(16.dp),
+        color = Color.White.copy(alpha = 0.15f),
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier.size(20.dp)
             ) {
-                ActionCard(
-                    modifier = Modifier.weight(1f).spaceIAStaggeredEntrance(3),
-                    icon = Icons.Default.QrCodeScanner,
-                    label = "Tocar para Acceder",
-                    tint = Color(0xFF0D47A1)
+                CircularProgressIndicator(
+                    progress = 1f,
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.White.copy(alpha = 0.2f),
+                    strokeWidth = 2.dp
                 )
-                ActionCard(
-                    modifier = Modifier.weight(1f).spaceIAStaggeredEntrance(4),
-                    icon = Icons.Default.Wallet,
-                    label = "Agregar a Wallet",
-                    tint = Color(0xFF4FC3F7)
+                CircularProgressIndicator(
+                    progress = animatedProgress,
+                    modifier = Modifier.fillMaxSize(),
+                    color = Color.White,
+                    strokeWidth = 2.dp
+                )
+                Icon(
+                    Icons.Default.Timer,
+                    contentDescription = null,
+                    tint = Color.White,
+                    modifier = Modifier.size(10.dp)
                 )
             }
             
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.width(10.dp))
+            
+            Text(
+                text = remainingTimeText,
+                color = Color.White,
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Bold,
+                letterSpacing = 0.5.sp
+            )
         }
     }
 }
@@ -238,34 +257,6 @@ fun QrCodeImage(token: String) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Fit
         )
-    }
-}
-
-@Composable
-fun ActionCard(modifier: Modifier, icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, tint: Color) {
-    Card(
-        modifier = modifier
-            .height(100.dp)
-            .spaceIAPressScale(),
-        shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Surface(
-                shape = CircleShape,
-                color = tint.copy(alpha = 0.1f),
-                modifier = Modifier.size(40.dp)
-            ) {
-                Icon(icon, contentDescription = null, tint = tint, modifier = Modifier.padding(8.dp))
-            }
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = label, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = Color.DarkGray)
-        }
     }
 }
 

@@ -73,26 +73,26 @@ class LoginViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(
                         isLoading = false,
-                        errorMessage = error.message ?: "Authentication failed"
+                        errorMessage = error.message ?: "Error de autenticación"
                     )
                 }
-                _effect.send(LoginEffect.ShowSnackbar(error.message ?: "Authentication failed"))
+                _effect.send(LoginEffect.ShowSnackbar(error.message ?: "Error de autenticación"))
             }
         }
     }
 
     private fun validateEmail(email: String): String? {
         return when {
-            email.isBlank() -> "Email is required"
-            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Invalid email format"
+            email.isBlank() -> "El correo es obligatorio"
+            !Patterns.EMAIL_ADDRESS.matcher(email).matches() -> "Formato de correo inválido"
             else -> null
         }
     }
 
     private fun validatePassword(password: String): String? {
         return when {
-            password.isBlank() -> "Password is required"
-            password.length < 6 -> "Password must be at least 6 characters"
+            password.isBlank() -> "La contraseña es obligatoria"
+            password.length < 6 -> "La contraseña debe tener al menos 6 caracteres"
             else -> null
         }
     }
